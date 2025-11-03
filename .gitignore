@@ -1,0 +1,6 @@
+
+MarketPlace_App/node_modules
+MarketPlace_App/dist
+MarketPlace_App/.env
+MarketPlace_App/.env.production
+
