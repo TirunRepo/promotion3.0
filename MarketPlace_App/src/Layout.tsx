@@ -10,7 +10,6 @@ const Layout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const handleLogout = async () => {
     await logout();
- 
   };
 
   return (
@@ -35,8 +34,13 @@ const Layout: React.FC = () => {
           >
             ☰
           </button>
-          <Navbar.Brand className="fw-bold" style={{ fontSize: "1rem", padding: "0" }}>
-            {user?.role === "Admin " ? " Cruise Marketplace Admin ( Int2Cruise )" : user?.companyName}
+          <Navbar.Brand
+            className="fw-bold"
+            style={{ fontSize: "1rem", padding: "0" }}
+          >
+            {user?.role?.trim().toLowerCase() === "admin"
+              ? "Cruise Marketplace Admin (Int2Cruise)"
+              : user?.companyName}
           </Navbar.Brand>
 
           {/* Persona Dropdown */}
@@ -49,7 +53,9 @@ const Layout: React.FC = () => {
                 style={{ minHeight: "32px", padding: "2px 10px" }}
               >
                 <Image
-                  src={`https://ui-avatars.com/api/?name=${user?.fullname ?? "User"}`}
+                  src={`https://ui-avatars.com/api/?name=${
+                    user?.fullname ?? "User"
+                  }`}
                   roundedCircle
                   width="32"
                   height="32"
@@ -67,7 +73,9 @@ const Layout: React.FC = () => {
                 <Dropdown.Header>
                   <div className="d-flex align-items-center">
                     <Image
-                      src={`https://ui-avatars.com/api/?name=${user?.fullname ?? "User"}&size=64`}
+                      src={`https://ui-avatars.com/api/?name=${
+                        user?.fullname ?? "User"
+                      }&size=64`}
                       roundedCircle
                       width="40"
                       height="40"
@@ -90,10 +98,7 @@ const Layout: React.FC = () => {
                 <Dropdown.Item onClick={() => alert("Account Page TODO")}>
                   My Account
                 </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={handleLogout}
-                  className="text-danger"
-                >
+                <Dropdown.Item onClick={handleLogout} className="text-danger">
                   Logout
                 </Dropdown.Item>
               </Dropdown.Menu>
