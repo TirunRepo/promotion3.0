@@ -16,6 +16,8 @@ import type { IIdNameModel } from "../../common/IIdNameModel";
 import DeleteCabin from "./DeleteCabin";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import { IoIosAdd } from "react-icons/io";
+import AgentPromotions from "../promotions/AgentPromotions";
 
 const CruiseInventoryManager: React.FC = () => {
   const [inventories, setInventories] = useState<ICruiseInventory[]>([]);
@@ -23,6 +25,7 @@ const CruiseInventoryManager: React.FC = () => {
     useState<ICruiseInventory | null>(null);
   const [modalShow, setModalShow] = useState(false);
   const [modalShowDelete, setModalShowDelete] = useState(false);
+  const [agentModelVisible, setAgentModalVisible] = useState(false);
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -352,6 +355,30 @@ const CruiseInventoryManager: React.FC = () => {
                         inv.totalPrice ?? "-"
                       }`}</td>
                       <td className="d-flex justify-content-center gap-2">
+                        {user?.role === "Agent" && (
+                          <>
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id="tooltip-enable-agent">
+                                  {"Add Promotion"}
+                                </Tooltip>
+                              }
+                            >
+                              <Button size="sm" variant="outline-primary"
+                               onClick={() => {
+                                    console.log("Clicked Add Promotion");
+                                    setAgentModalVisible(true);
+                                    setSelectedInventory(inv);
+                                  }}>
+                                <IoIosAdd
+                                  size={18}
+                                 
+                                />
+                              </Button>
+                            </OverlayTrigger>
+                          </>
+                        )}
                         <Button
                           size="sm"
                           variant="outline-primary"
@@ -386,9 +413,7 @@ const CruiseInventoryManager: React.FC = () => {
                             placement="top"
                             overlay={
                               <Tooltip id="tooltip-enable-agent">
-                                {inv?.enableAgent
-                                  ? "Disable"
-                                  : "Enable"}
+                                {inv?.enableAgent ? "Disable" : "Enable"}
                               </Tooltip>
                             }
                           >
@@ -406,8 +431,11 @@ const CruiseInventoryManager: React.FC = () => {
                                       enableAdmin: false,
                                       enableAgent: value,
                                     });
-                                    showToast("Status updated successfully","success");
-                                     fetchInventories();
+                                    showToast(
+                                      "Status updated successfully",
+                                      "success"
+                                    );
+                                    fetchInventories();
                                   } catch (err) {
                                     console.error("Failed to update role", err);
                                   }
@@ -433,17 +461,20 @@ const CruiseInventoryManager: React.FC = () => {
                               checked={inv.enableAdmin || false}
                               onChange={async (e) => {
                                 const value = e.target.checked;
-                             
+
                                 if (inv?.id) {
                                   try {
                                     await CruiseService.updateInventory({
                                       id: inv.id,
                                       userRole: "admin",
                                       enableAdmin: value,
-                                      enableAgent: false, 
+                                      enableAgent: false,
                                     });
-                                    showToast("Status updated successfully","success");
-                                     fetchInventories();
+                                    showToast(
+                                      "Status updated successfully",
+                                      "success"
+                                    );
+                                    fetchInventories();
                                   } catch (err) {
                                     console.error("Failed to update role", err);
                                   }
@@ -475,6 +506,14 @@ const CruiseInventoryManager: React.FC = () => {
           </Card>
         </Col>
       </Row>
+
+      {agentModelVisible && (
+        <AgentPromotions
+          show={agentModelVisible}
+          onHide={() => setAgentModalVisible(false)}
+          inventory={selectedInventory}
+        />
+      )}
 
       {/* Edit / Add Modal */}
       {modalShow && selectedInventory && (

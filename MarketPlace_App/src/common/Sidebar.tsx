@@ -94,8 +94,8 @@ const Sidebar: React.FC = () => {
   className="sidebar-container d-flex flex-column shadow-sm border-end bg-white"
   style={{
     width: collapsed ? "50px" : "250px",
-    minWidth: collapsed ? "50px" : "250px",
-    maxWidth: collapsed ? "50px" : "250px",
+    // minWidth: collapsed ? "50px" : "250px",
+    // maxWidth: collapsed ? "50px" : "250px",
     transition: "width 0.22s cubic-bezier(.4,0,.2,1)",
     minHeight: "100vh",
     zIndex: 2,

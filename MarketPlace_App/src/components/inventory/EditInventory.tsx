@@ -52,7 +52,7 @@ const emptyInventory = (): ICruiseInventory => ({
   grats: null,
   cabinDetails: [],
   enableAdmin: false,
-  enableAgent: false,
+  enableAgent: false,  
 });
 
 const normalizeInventory = (inv: ICruiseInventory): ICruiseInventory => {
@@ -96,7 +96,6 @@ const EditInventory: React.FC<EditInventoryProps> = ({
   );
   const [cruiseLines, setCruiseLines] = useState<IIdNameModel<Number>[]>([]);
   const [ships, setShips] = useState<IIdNameValueModel<any>[]>([]);
-  const [confirmation, setConfirmation] = useState<boolean>(false);
   const isAdmin = role === "Admin";
   const isAgent = role === "Agent";
   useEffect(() => {
