@@ -107,7 +107,7 @@ const PromotionManager: React.FC = () => {
   return (
     <div className="mt-4">
       <LoadingOverlay show={loading} />
-      {user?.role === "Agent" && (
+      {user?.role === "Admin" && (
         <Row className="mb-3 g-2">
           <Col xs={12} md={3}>
             <Button variant="primary" onClick={handleAdd} className="w-100">

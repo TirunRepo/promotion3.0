@@ -830,13 +830,38 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                               disabled={isAdmin}
                               type="text"
                               value={cabin.cabinNo}
-                              onChange={(e) =>
-                                handleCabinChange(
-                                  index,
-                                  "cabinNo",
-                                  e.target.value
-                                )
-                              }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Choose regex based on cabinType
+                                const regex =
+                                  cabin.cabinType === "GTY"
+                                    ? /^[0-9]*$/
+                                    : /^[a-zA-Z0-9, ]*$/;
+                                // Allow only valid input or empty
+                                if (regex.test(value) || value === "") {
+                                  handleCabinChange(index, "cabinNo", value);
+                                }
+                              }}
+                              onKeyPress={(e) => {
+                                if (cabin.cabinType === "GTY") {
+                                  // Only digits
+                                  if (!/[0-9]/.test(e.key)) e.preventDefault();
+                                } else {
+                                  // Allow letters and digits
+                                  if (!/^[a-zA-Z0-9, ]*$/.test(e.key))
+                                    e.preventDefault();
+                                }
+                              }}
+                              onPaste={(e) => {
+                                const pasted = e.clipboardData.getData("text");
+                                if (cabin.cabinType === "GTY") {
+                                  if (!/^[0-9]+$/.test(pasted))
+                                    e.preventDefault();
+                                } else {
+                                  if (!/^[a-zA-Z0-9]+$/.test(pasted))
+                                    e.preventDefault();
+                                }
+                              }}
                             />
                           </td>
                           <td>
