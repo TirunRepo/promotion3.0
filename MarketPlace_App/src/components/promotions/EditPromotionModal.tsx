@@ -262,13 +262,13 @@ const EditPromotionModal: React.FC<EditPromotionModalProps> = ({
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>Discount %</Form.Label>
-                      <Form.Control type="number" step="0.01" name="discountPer" value={values.discountPer} onChange={handleChange} readOnly/>
+                      <Form.Control type="number" step="0.01" name="discountPer" value={values.discountPer} onChange={handleChange}/>
                     </Form.Group>
                   </Col>
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>Discount Amount</Form.Label>
-                      <Form.Control type="number" step="0.01" name="discountAmount" value={values?.discountAmount!} onChange={handleChange} readOnly/>
+                      <Form.Control type="number" step="0.01" name="discountAmount" value={values?.discountAmount!} onChange={handleChange}/>
                     </Form.Group>
                   </Col>
 

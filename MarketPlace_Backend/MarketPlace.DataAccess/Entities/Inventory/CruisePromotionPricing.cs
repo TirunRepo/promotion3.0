@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MarketPlace.Common.CommonModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MarketPlace.DataAccess.Entities.Inventory
 {
-    public class CruisePromotionPricing
+    public class CruisePromotionPricing : RecordBase
     {
         [Key]
         public int Id { get; set; }

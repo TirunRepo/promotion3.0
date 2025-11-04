@@ -53,6 +53,7 @@ export interface ICruiseInventory {
 
 // Pricing model
 export interface ICruisePricing {
+  id?:number
   cruiseInventoryId?: number;
   pricingType: string;
   commisionRate: number | null;

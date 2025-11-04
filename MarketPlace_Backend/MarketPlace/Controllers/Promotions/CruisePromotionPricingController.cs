@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.API.Controllers.Promotions
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CruisePromotionPricingController : ControllerBase
     {

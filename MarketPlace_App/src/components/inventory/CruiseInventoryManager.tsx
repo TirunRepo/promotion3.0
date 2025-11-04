@@ -361,20 +361,20 @@ const CruiseInventoryManager: React.FC = () => {
                               placement="top"
                               overlay={
                                 <Tooltip id="tooltip-enable-agent">
-                                  {"Add Promotion"}
+                                  {"Promotion"}
                                 </Tooltip>
                               }
                             >
-                              <Button size="sm" variant="outline-primary"
-                               onClick={() => {
-                                    console.log("Clicked Add Promotion");
-                                    setAgentModalVisible(true);
-                                    setSelectedInventory(inv);
-                                  }}>
-                                <IoIosAdd
-                                  size={18}
-                                 
-                                />
+                              <Button
+                                size="sm"
+                                variant="outline-primary"
+                                onClick={() => {
+                                  console.log("Clicked Add Promotion");
+                                  setAgentModalVisible(true);
+                                  setSelectedInventory(inv);
+                                }}
+                              >
+                                <IoIosAdd size={18} />
                               </Button>
                             </OverlayTrigger>
                           </>
