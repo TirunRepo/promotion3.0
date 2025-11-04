@@ -69,6 +69,9 @@ builder.Services.AddScoped<ICruiseCabinRepository, CruiseCabinRepository>();
 builder.Services.AddScoped<IMarkupRepository, MarkupRepository>();
 builder.Services.AddScoped<IMarkupsService, MarkUpsService>();
 
+builder.Services.AddScoped<ICruisePromotionPricingRepository, CruisePricingPromotionRepository>();
+builder.Services.AddScoped<ICruisePromotionPricingService, CruisePromotionPricingService>();
+
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateMarkupCommand).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreatePromotionCommand).Assembly));
 builder.Services

@@ -31,6 +31,7 @@ namespace MarketPlace.DataAccess.DBContext
         public DbSet<Promotions> Promotions { get; set; }
         public DbSet<PromotionType> PromotionType { get; set; }
         public DbSet<MarkupDetail> MarkupDetails { get; set; }
+        public DbSet<CruisePromotionPricing> CruisePromotionPricing { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
