@@ -46,7 +46,6 @@ const CruiseInventoryManager: React.FC = () => {
   const [departurePorts, setDeparturePorts] = useState<IIdNameModel<number>[]>([]);
 
   const [cruiseLines, setCruiseLines] = useState<IIdNameModel<number>[]>([]);
-
   const [promotions, setPromotions] = useState<IPromotionResponse[]>([]);
 
   // Fetch inventories
@@ -81,6 +80,8 @@ const CruiseInventoryManager: React.FC = () => {
       .then((res) => res.data.data && setPromotions(res.data.data))
       .catch(console.error);
   }, []);
+
+  // console.log("promotions", promotions);
 
   // Fetch inventories on page change
   useEffect(() => {
@@ -377,7 +378,6 @@ const CruiseInventoryManager: React.FC = () => {
                                 size="sm"
                                 variant="outline-primary"
                                 onClick={() => {
-                                  console.log("Clicked Add Promotion");
                                   setAgentModalVisible(true);
                                   setSelectedInventory(inv);
                                 }}
@@ -520,6 +520,7 @@ const CruiseInventoryManager: React.FC = () => {
           show={agentModelVisible}
           onHide={() => setAgentModalVisible(false)}
           inventory={selectedInventory}
+          allPromotions={promotions}
         />
       )}
 

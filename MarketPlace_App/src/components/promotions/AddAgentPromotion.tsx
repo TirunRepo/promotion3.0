@@ -3,12 +3,14 @@ import { Modal, Form, Card, Row, Col, Button } from "react-bootstrap";
 import { ErrorMessage, Formik } from "formik";
 import * as Yup from "yup";
 import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricingService";
+import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
 
 interface AddAgentPromotionProps {
   show: boolean;
   onHide: () => void;
   mode: "add" | "edit";
   promotion?: any; // or your ICruisePromotionPricing interface
+  promotionsGet?: IPromotionResponse[] | null;
 }
 
 // Yup Validation Schema
@@ -42,6 +44,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
   onHide,
   mode,
   promotion,
+  promotionsGet
 }) => {
   // Default / Initial values
   const initialValues: ICruisePromotionPricing = {
@@ -75,7 +78,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
     }
     onHide();
   };
-
+    console.log("promotionsGet", promotionsGet);
   return (
     <Modal show={show} onHide={onHide} size="xl" centered scrollable>
       <Modal.Header closeButton className="bg-light">
@@ -272,15 +275,24 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
                   </Row>
                 </Card.Body>
               </Card>
-              <Col style={{ textAlign: "end" }}>
-                <Button variant="secondary" onClick={onHide} className="me-2">
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                  {mode === "edit" ? "Update Promotion" : "Add Promotion"}
-                </Button>
-              </Col>
             </Modal.Body>
+            <Modal.Footer
+              className="bg-light"
+              style={{
+                position: "sticky",
+                bottom: 0,
+                zIndex: 10,
+                background: "#fff",
+                borderTop: "1px solid #dee2e6",
+              }}
+            >
+              <Button variant="secondary" onClick={onHide} className="me-2">
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                {mode === "edit" ? "Update Promotion" : "Add Promotion"}
+              </Button>
+            </Modal.Footer>
           </Form>
         )}
       </Formik>

@@ -8,6 +8,7 @@ import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricing
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
 import AddAgentPromotion from "./AddAgentPromotion";
 import CruiseService from "../Services/CruiseService";
+import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import LoadingOverlay from "../../common/LoadingOverlay";
 import { useToast } from "../../common/Toaster";
@@ -16,12 +17,14 @@ interface AgentPromotionProps {
   show: boolean;
   onHide: () => void;
   inventory?: ICruiseInventory | null;
+  allPromotions: IPromotionResponse[] | null;
 }
 
 const AgentPromotions: React.FC<AgentPromotionProps> = ({
   show,
   onHide,
   inventory,
+  allPromotions,
 }) => {
   const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
     ICruisePromotionPricing[]
@@ -197,6 +200,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
           show={modalShow}
           onHide={() => setModalShow(false)}
           mode={modalMode}
+          promotionsGet={allPromotions}
         />
       )}
 
