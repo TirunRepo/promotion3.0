@@ -34,7 +34,7 @@ class CruisePromotionPricingService {
             { CruiseInventoryId }
         );
 
-    delete = (Id: number) => ApiUtility.delete(`/Delete/${Id}`);
+    delete = (Id: number) => ApiUtility.delete(`${this._route}/Delete/${Id}`);
 
 
 }
