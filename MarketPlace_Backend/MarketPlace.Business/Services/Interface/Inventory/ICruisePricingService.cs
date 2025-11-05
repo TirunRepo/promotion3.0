@@ -1,6 +1,7 @@
 ﻿using MarketPlace.Common.DTOs.RequestModels.Inventory;
 using MarketPlace.Common.DTOs.ResponseModels.Inventory;
 using MarketPlace.Common.PagedData;
+using MarketPlace.DataAccess.Entities.Inventory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,6 @@ namespace MarketPlace.Business.Services.Interface.Inventory
         Task<CruisePricingModel> Insert(CruisePricingModel model);
         Task<CruisePricingModel> Update(int id,CruisePricingModel model);
         Task<List<CruisePricingResponse>> GetByInventoryIdsAsync(List<int> inventoryIds);
-
+        Task<CruisePricing> GetByCruiseInventoryId(int CruiseInventoryId);
     }
 }

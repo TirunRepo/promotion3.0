@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Table, Col, Row, Card } from "react-bootstrap";
-import type { ICruiseInventory } from "../Services/CruiseService";
+import type {
+  ICruiseInventory,
+  ICruisePricing,
+} from "../Services/CruiseService";
 import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricingService";
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
 import AddAgentPromotion from "./AddAgentPromotion";
+import CruiseService from "../Services/CruiseService";
 
 interface AgentPromotionProps {
   show: boolean;
@@ -27,6 +31,22 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         .then(setCruisePromotionPricing)
         .catch(console.error);
     }
+  const [cruisePricing, setCruisePricing] = useState<ICruisePricing[]>([]);
+
+  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
+    ICruisePromotionPricing[]
+  >([]);
+
+  useEffect(() => {
+    if (!inventory?.id) return;
+
+    CruisePromotionPricingService.getByCruiseInventory(inventory.id)
+      .then(setCruisePromotionPricing)
+      .catch(console.error);
+
+    CruiseService.getByCruiseInventoryId(inventory.id)
+      .then((res) => setCruisePricing(res.data.data))
+      .catch(console.error);
   }, [inventory]);
 
   const handleAddClick = () => {

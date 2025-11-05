@@ -77,5 +77,12 @@ namespace MarketPlace.DataAccess.Repositories.Inventory.Respository
             return pricing.FirstOrDefault();
 
         }
+
+        public async Task<CruisePricing> GetByCruiseInventoryId(int cruiseInventoryId) 
+        {
+            return await _context.CruisePricing
+               .Where(x => x.CruiseInventoryId == cruiseInventoryId)
+               .FirstOrDefaultAsync();
+        }
     }
 }

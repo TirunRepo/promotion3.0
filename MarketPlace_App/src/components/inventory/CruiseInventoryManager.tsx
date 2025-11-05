@@ -18,6 +18,8 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { IoIosAdd } from "react-icons/io";
 import AgentPromotions from "../promotions/AgentPromotions";
+import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
+import PromotionService from "../Services/Promotions/PromotionService";
 
 const CruiseInventoryManager: React.FC = () => {
   const [inventories, setInventories] = useState<ICruiseInventory[]>([]);
@@ -45,6 +47,7 @@ const CruiseInventoryManager: React.FC = () => {
   );
   const [cruiseLines, setCruiseLines] = useState<IIdNameModel<number>[]>([]);
 
+  const [promotions, setPromotions] = useState<IPromotionResponse[]>([]);
   // Fetch inventories
   const fetchInventories = async (page = currentPage, size = pageSize) => {
     setLoading(true);
@@ -71,6 +74,10 @@ const CruiseInventoryManager: React.FC = () => {
 
     CruiseService.getCruiseLines()
       .then((res) => res.data.data && setCruiseLines(res.data.data))
+      .catch(console.error);
+
+    PromotionService.getAllPromotions()
+      .then((res) => res.data.data && setPromotions(res.data.data))
       .catch(console.error);
   }, []);
 

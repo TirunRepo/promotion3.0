@@ -1,15 +1,17 @@
 ﻿using MarketPlace.Business.Services.Interface;
 using MarketPlace.Business.Services.Interface.Inventory;
+using MarketPlace.Business.Services.Services.Inventory;
 using MarketPlace.Common.APIResponse;
 using MarketPlace.Common.CommonModel;
 using MarketPlace.Common.DTOs.RequestModels.Inventory;
 using MarketPlace.Common.DTOs.ResponseModels.Inventory;
-using System.Collections.Generic;
+using MarketPlace.Common.PagedData;
 using MarketPlace.DataAccess.DBContext;
+using MarketPlace.DataAccess.Entities.Inventory;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;    
+using System.Collections.Generic;
 using System.Security.Claims;
-using MarketPlace.Common.PagedData;
 
 namespace Marketplace.API.Controllers.Inventory
 {
@@ -629,11 +631,16 @@ namespace Marketplace.API.Controllers.Inventory
             }
         }
 
+        [HttpGet("GetByCruiseInventoryId")]
+        public async Task<ActionResult> GetByCruiseInventoryId(int cruiseInventoryId)
+        {
+            var data = await _cruisePricingService.GetByCruiseInventoryId(cruiseInventoryId);
 
+            if (data == null)
+                return NotFound(APIResponse<CruisePricing>.Fail($"Cruise Pricing Against CruiseInventoryId : {cruiseInventoryId}  Not Found."));
 
-
-
-
+            return Ok(APIResponse<CruisePricing>.Ok(data));
+        }
 
     }
 }

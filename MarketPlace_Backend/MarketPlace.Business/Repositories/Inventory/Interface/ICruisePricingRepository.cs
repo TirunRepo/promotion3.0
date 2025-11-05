@@ -13,6 +13,6 @@ namespace MarketPlace.DataAccess.Repositories.Inventory.Interface
 
         Task<List<CruisePricingResponse>> GetByInventoryIdsAsync(List<int> inventoryIds);
         Task<CruisePricing?> GetByInventoryIdAsync(int? inventoryIds);
-
+        Task<CruisePricing> GetByCruiseInventoryId(int CruiseInventoryId);
     }
 }
