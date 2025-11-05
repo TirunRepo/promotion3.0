@@ -65,6 +65,7 @@ export interface ICruisePricing {
   nccf: number | null;
   currencyType: string;
   cabinOccupancy: string;
+  totalPrice: number | null | undefined
 }
 
 // Cabin model
@@ -182,7 +183,7 @@ class CruiseService {
     );
 
   getByCruiseInventoryId = (cruiseInventoryId: number) => {
-    return ApiUtility.get<IApiResponse<ICruisePricing[]>>(
+    return ApiUtility.get<IApiResponse<ICruisePricing>>(
       `${this.route}/GetByCruiseInventoryId`,
       { cruiseInventoryId }
     );

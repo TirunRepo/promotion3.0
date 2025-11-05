@@ -16,7 +16,6 @@ import type { IIdNameModel } from "../../common/IIdNameModel";
 import DeleteCabin from "./DeleteCabin";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import { IoIosAdd } from "react-icons/io";
 import AgentPromotions from "../promotions/AgentPromotions";
 import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
 import PromotionService from "../Services/Promotions/PromotionService";
@@ -122,6 +121,7 @@ const CruiseInventoryManager: React.FC = () => {
         currencyType: inventory.currencyType,
         pricingType: inventory.pricingType,
         cabinOccupancy: inventory.cabinOccupancy,
+        totalPrice: inventory.totalPrice
       };
 
       if (pricingPayload.pricingType) {

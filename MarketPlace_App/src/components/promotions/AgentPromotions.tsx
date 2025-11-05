@@ -17,7 +17,7 @@ interface AgentPromotionProps {
   show: boolean;
   onHide: () => void;
   inventory?: ICruiseInventory | null;
-  allPromotions: IPromotionResponse[] | null;
+  allPromotions: IPromotionResponse[];
 }
 
 const AgentPromotions: React.FC<AgentPromotionProps> = ({
@@ -31,7 +31,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   >([]);
   const [modalShow, setModalShow] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-  const [cruisePricing, setCruisePricing] = useState<ICruisePricing[]>([]);
+  const [cruisePricing, setCruisePricing] = useState<ICruisePricing>({} as ICruisePricing);
   const [promotionToDelete, setPromotionToDelete] = useState<number | null>(
     null
   );
@@ -61,7 +61,9 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
       .catch(console.error);
 
     CruiseService.getByCruiseInventoryId(inventory.id)
-      .then((res) => setCruisePricing(res.data.data))
+      .then((res) => {
+        setCruisePricing(res.data.data);
+      })
       .catch(console.error);
   }, [inventory]);
 
