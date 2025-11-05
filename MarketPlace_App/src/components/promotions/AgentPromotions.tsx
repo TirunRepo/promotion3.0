@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Table, Col, Row, Card } from "react-bootstrap";
-import type { ICruiseInventory } from "../Services/CruiseService";
+import type {
+  ICruiseInventory,
+  ICruisePricing,
+} from "../Services/CruiseService";
 import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricingService";
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
+import CruiseService from "../Services/CruiseService";
 
 interface AgentPromotionProps {
   show: boolean;
@@ -15,13 +19,21 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   onHide,
   inventory,
 }) => {
+  const [cruisePricing, setCruisePricing] = useState<ICruisePricing[]>([]);
+
   const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
     ICruisePromotionPricing[]
   >([]);
 
   useEffect(() => {
-    CruisePromotionPricingService.getByCruiseInventory(inventory?.id ?? 0)
+    if (!inventory?.id) return;
+
+    CruisePromotionPricingService.getByCruiseInventory(inventory.id)
       .then(setCruisePromotionPricing)
+      .catch(console.error);
+
+    CruiseService.getByCruiseInventoryId(inventory.id)
+      .then((res) => setCruisePricing(res.data.data))
       .catch(console.error);
   }, [inventory]);
 
@@ -40,7 +52,6 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         </Modal.Header>
 
         <Modal.Body className="px-4 py-3">
-         
           <Row className="mb-3" style={{ gap: "10px" }}>
             <Col xs="auto">
               <Button variant="primary" onClick={() => {}}>
@@ -113,8 +124,6 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
           </Row>
         </Modal.Body>
       </Modal>
-
-
     </>
   );
 };

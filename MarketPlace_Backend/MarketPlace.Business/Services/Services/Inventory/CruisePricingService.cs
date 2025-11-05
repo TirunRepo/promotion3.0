@@ -2,8 +2,10 @@
 using MarketPlace.Common.DTOs.RequestModels.Inventory;
 using MarketPlace.Common.DTOs.ResponseModels.Inventory;
 using MarketPlace.Common.PagedData;
+using MarketPlace.DataAccess.Entities.Inventory;
 using MarketPlace.DataAccess.Repositories.Inventory.Interface;
 using MarketPlace.DataAccess.Repositories.Inventory.Respository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +82,11 @@ namespace MarketPlace.Business.Services.Services.Inventory
         public async Task<List<CruisePricingResponse>> GetByInventoryIdsAsync(List<int> inventoryIds)
         {
             return await _CruisePricingRepository.GetByInventoryIdsAsync(inventoryIds);
+        }
+
+        public async Task<CruisePricing> GetByCruiseInventoryId(int cruiseInventoryId)
+        {
+            return await _CruisePricingRepository.GetByCruiseInventoryId(cruiseInventoryId);
         }
 
     }
