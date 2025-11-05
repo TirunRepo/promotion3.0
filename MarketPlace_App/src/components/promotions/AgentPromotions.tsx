@@ -3,6 +3,7 @@ import { Modal, Button, Table, Col, Row, Card } from "react-bootstrap";
 import type { ICruiseInventory } from "../Services/CruiseService";
 import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricingService";
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
+import AddAgentPromotion from "./AddAgentPromotion";
 
 interface AgentPromotionProps {
   show: boolean;
@@ -15,15 +16,30 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   onHide,
   inventory,
 }) => {
-  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
-    ICruisePromotionPricing[]
-  >([]);
+  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<ICruisePromotionPricing[]>([]);
+  const [modalShow, setModalShow] = useState(false);
+//   const [selectedPromotion, setSelectedPromotion] = useState<ICruisePromotionPricing | null>(null);
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
 
   useEffect(() => {
-    CruisePromotionPricingService.getByCruiseInventory(inventory?.id ?? 0)
-      .then(setCruisePromotionPricing)
-      .catch(console.error);
+    if (inventory?.id) {
+      CruisePromotionPricingService.getByCruiseInventory(inventory.id)
+        .then(setCruisePromotionPricing)
+        .catch(console.error);
+    }
   }, [inventory]);
+
+  const handleAddClick = () => {
+    // setSelectedPromotion(null);
+    setModalMode("add");
+    setModalShow(true);
+  };
+
+  const handleEditClick = (item: ICruisePromotionPricing) => {
+    // setSelectedPromotion(item);
+    setModalMode("edit");
+    setModalShow(true);
+  };
 
   return (
     <>
@@ -36,14 +52,13 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>{"Cruise Pricing  Promotion"}</Modal.Title>
+          <Modal.Title>Cruise Pricing Promotion</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="px-4 py-3">
-         
           <Row className="mb-3" style={{ gap: "10px" }}>
             <Col xs="auto">
-              <Button variant="primary" onClick={() => {}}>
+              <Button variant="primary" onClick={handleAddClick}>
                 Add Promotion
               </Button>
             </Col>
@@ -62,7 +77,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                   <thead className="table-light">
                     <tr>
                       <th>Promo ID</th>
-                      <th>Cruisise Inventory ID</th>
+                      <th>Cruise Inventory ID</th>
                       <th>Single Price</th>
                       <th>Double Price</th>
                       <th>Triple Price</th>
@@ -84,24 +99,19 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                             <Button
                               size="sm"
                               variant="outline-primary"
-                              onClick={() => {}}
+                              onClick={() => handleEditClick(item)}
                             >
                               Edit
                             </Button>
-                            <>
-                              <Button size="sm" variant="outline-danger">
-                                Delete
-                              </Button>
-                            </>
+                            <Button size="sm" variant="outline-danger">
+                              Delete
+                            </Button>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td
-                          colSpan={12}
-                          className="text-center text-muted py-4"
-                        >
+                        <td colSpan={12} className="text-center text-muted py-4">
                           No promotions found
                         </td>
                       </tr>
@@ -114,7 +124,14 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         </Modal.Body>
       </Modal>
 
-
+      {/* Add/Edit Agent Promotion Modal */}
+      {modalShow && (
+        <AddAgentPromotion
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          mode={modalMode} 
+        />
+      )}
     </>
   );
 };
