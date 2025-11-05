@@ -8,19 +8,24 @@ import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricing
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
 import AddAgentPromotion from "./AddAgentPromotion";
 import CruiseService from "../Services/CruiseService";
+import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
 
 interface AgentPromotionProps {
   show: boolean;
   onHide: () => void;
   inventory?: ICruiseInventory | null;
+  allPromotions: IPromotionResponse[] | null;
 }
 
 const AgentPromotions: React.FC<AgentPromotionProps> = ({
   show,
   onHide,
   inventory,
+  allPromotions,
 }) => {
-  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<ICruisePromotionPricing[]>([]);
+  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
+    ICruisePromotionPricing[]
+  >([]);
   const [modalShow, setModalShow] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [cruisePricing, setCruisePricing] = useState<ICruisePricing[]>([]);
@@ -52,9 +57,12 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
     setModalShow(true);
   };
 
-  const handleDelete = (id : number) =>{
+  const handleDelete = (id: number) => {
     setPromotionToDelete(id);
-  }
+  };
+
+  console.log("cruisePrincing", cruisePricing);
+  console.log("allPromotions", allPromotions);
 
   return (
     <>
@@ -132,7 +140,10 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={12} className="text-center text-muted py-4">
+                        <td
+                          colSpan={12}
+                          className="text-center text-muted py-4"
+                        >
                           No promotions found
                         </td>
                       </tr>
@@ -150,7 +161,8 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         <AddAgentPromotion
           show={modalShow}
           onHide={() => setModalShow(false)}
-          mode={modalMode} 
+          mode={modalMode}
+          promotionsGet={allPromotions}
         />
       )}
     </>
