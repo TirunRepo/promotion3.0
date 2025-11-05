@@ -59,7 +59,7 @@ namespace Marketplace.API.Controllers.Promotions
             return Ok(APIResponse<CruisePromotionPricing>.Ok(data));
         }
 
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{Id}")]
         public async Task<ActionResult<APIResponse<CruisePromotionPricing>>> Delete(int Id)
         {
             await _cruisePromotionPricingService.DeleteAsync(Id);

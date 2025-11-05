@@ -8,6 +8,7 @@ import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricing
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
 import AddAgentPromotion from "./AddAgentPromotion";
 import CruiseService from "../Services/CruiseService";
+import ConfirmationModal from "../../common/ConfirmationModal";
 
 interface AgentPromotionProps {
   show: boolean;
@@ -20,13 +21,16 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   onHide,
   inventory,
 }) => {
-  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<ICruisePromotionPricing[]>([]);
+  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
+    ICruisePromotionPricing[]
+  >([]);
   const [modalShow, setModalShow] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [cruisePricing, setCruisePricing] = useState<ICruisePricing[]>([]);
   const [promotionToDelete, setPromotionToDelete] = useState<number | null>(
     null
   );
+  const [deleteModal, setDeleteModal] = useState(false);
 
   useEffect(() => {
     if (!inventory?.id) return;
@@ -52,9 +56,28 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
     setModalShow(true);
   };
 
-  const handleDelete = (id : number) =>{
+  const handleDelete = (id: number) => {
     setPromotionToDelete(id);
-  }
+    setDeleteModal(true);
+  };
+
+    // Handle delete
+    const handleDeleteConfirm = async () => {
+      if (!promotionToDelete) return;
+      //setLoading(true);
+      try {
+        await CruisePromotionPricingService.delete(promotionToDelete);
+        //showToast("Inventory deleted successfully", "success");
+        //fetchInventories(currentPage, pageSize);
+      } catch (err) {
+        console.error("Error deleting promotion:", err);
+        //showToast("Error deleting promotion", "error");
+      } finally {
+        //setLoading(false);
+        setDeleteModal(false);
+        setPromotionToDelete(null);
+      }
+    };
 
   return (
     <>
@@ -132,7 +155,10 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={12} className="text-center text-muted py-4">
+                        <td
+                          colSpan={12}
+                          className="text-center text-muted py-4"
+                        >
                           No promotions found
                         </td>
                       </tr>
@@ -150,11 +176,21 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         <AddAgentPromotion
           show={modalShow}
           onHide={() => setModalShow(false)}
-          mode={modalMode} 
+          mode={modalMode}
         />
       )}
+
+      {/* Delete Confirmation */}
+      <ConfirmationModal
+        show={deleteModal}
+        onCancel={() => setDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        message="Are you sure you want to delete this promotion from inventory?"
+      />
     </>
   );
 };
 
 export default AgentPromotions;
+
+
