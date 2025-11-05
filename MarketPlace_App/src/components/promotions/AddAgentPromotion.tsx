@@ -10,35 +10,35 @@ interface AddAgentPromotionProps {
   show: boolean;
   onHide: () => void;
   mode: "add" | "edit";
-  promotionsGet?: IPromotionResponse[] | null;
-  cruisePricing?: ICruisePricing[] | null;
+  promotionsGet?: IPromotionResponse[];
+  cruisePricing: ICruisePricing;
 }
 
 // Yup Validation Schema
-// const PromotionSchema = Yup.object().shape({
-//   promotionId: Yup.number().required("Promotion ID is required"),
-//   cruiseInventoryId: Yup.number().required("Cruise Inventory ID is required"),
-//   pricingType: Yup.string().required("Pricing Type is required"),
-//   commisionRate: Yup.number().required("Commission Rate is required"),
-//   singlePrice: Yup.number().required("Single Price is required"),
-//   doublePrice: Yup.number().required("Double Price is required"),
-//   triplePrice: Yup.number().required("Triple Price is required"),
-//   currencyType: Yup.string().required("Currency Type is required"),
-//   cabinOccupancy: Yup.string().required("Cabin Occupancy is required"),
-//   tax: Yup.number().required("Tax is required"),
-//   grats: Yup.number().required("Grats is required"),
-//   nccf: Yup.number().required("NCCF is required"),
-//   commisionSingleRate: Yup.number().required(
-//     "Commission Single Rate is required"
-//   ),
-//   commisionDoubleRate: Yup.number().required(
-//     "Commission Double Rate is required"
-//   ),
-//   commisionTripleRate: Yup.number().required(
-//     "Commission Triple Rate is required"
-//   ),
-//   totalPrice: Yup.number().required("Total Price is required"),
-// });
+const PromotionSchema = Yup.object().shape({
+  promotionId: Yup.number().required("Promotion ID is required"),
+  cruiseInventoryId: Yup.number().required("Cruise Inventory ID is required"),
+  pricingType: Yup.string().required("Pricing Type is required"),
+  commisionRate: Yup.number().required("Commission Rate is required"),
+  singlePrice: Yup.number().required("Single Price is required"),
+  doublePrice: Yup.number().required("Double Price is required"),
+  triplePrice: Yup.number().required("Triple Price is required"),
+  currencyType: Yup.string().required("Currency Type is required"),
+  cabinOccupancy: Yup.string().required("Cabin Occupancy is required"),
+  tax: Yup.number().required("Tax is required"),
+  grats: Yup.number().required("Grats is required"),
+  nccf: Yup.number().required("NCCF is required"),
+  commisionSingleRate: Yup.number().required(
+    "Commission Single Rate is required"
+  ),
+  commisionDoubleRate: Yup.number().required(
+    "Commission Double Rate is required"
+  ),
+  commisionTripleRate: Yup.number().required(
+    "Commission Triple Rate is required"
+  ),
+  totalPrice: Yup.number().required("Total Price is required"),
+});
 
 const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
   show,
@@ -47,27 +47,26 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
   promotionsGet,
   cruisePricing,
 }) => {
-  console.log("pricingData>>>", cruisePricing);
 
   // Default / Initial values
   const initialValues: ICruisePromotionPricing = {
     id: 0,
     promotionId: 0,
-    cruiseInventoryId: cruisePricing?.[0]?.cruiseInventoryId ?? 0,
-    pricingType: cruisePricing?.[0]?.pricingType ?? "",
-    commisionRate: cruisePricing?.[0]?.commisionRate ?? null,
-    singlePrice: cruisePricing?.[0]?.singlePrice ?? null,
-    doublePrice: cruisePricing?.[0]?.doublePrice ?? null,
-    triplePrice: cruisePricing?.[0]?.triplePrice ?? null,
-    currencyType: cruisePricing?.[0]?.currencyType ?? "",
-    cabinOccupancy: cruisePricing?.[0]?.cabinOccupancy ?? "",
-    tax: cruisePricing?.[0]?.tax ?? null,
-    grats: cruisePricing?.[0]?.grats ?? null,
-    nccf: cruisePricing?.[0]?.nccf ?? null,
-    commisionSingleRate: cruisePricing?.[0]?.singlePrice ?? null,
-    commisionDoubleRate: cruisePricing?.[0]?.doublePrice ?? null,
-    commisionTripleRate: cruisePricing?.[0]?.triplePrice ?? null,
-    totalPrice: cruisePricing?.[0]?.triplePrice ?? null,
+    cruiseInventoryId: cruisePricing.cruiseInventoryId ?? 0,
+    pricingType: cruisePricing.pricingType ?? "",
+    commisionRate: cruisePricing.commisionRate ?? 0,
+    singlePrice: cruisePricing.singlePrice ?? 0,
+    doublePrice: cruisePricing.doublePrice ?? 0,
+    triplePrice: cruisePricing.triplePrice ?? 0,
+    currencyType: cruisePricing.currencyType ?? "",
+    cabinOccupancy: cruisePricing.cabinOccupancy ?? "",
+    tax: cruisePricing.tax ?? 0,
+    grats: cruisePricing.grats ?? 0,
+    nccf: cruisePricing.nccf ?? 0,
+    commisionSingleRate: cruisePricing.singlePrice ?? 0,
+    commisionDoubleRate: cruisePricing.doublePrice ?? 0,
+    commisionTripleRate: cruisePricing.triplePrice ?? 0,
+    totalPrice: cruisePricing.totalPrice ?? 0,
   };
 
   const handleSubmit = async (values: any) => {
@@ -92,7 +91,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
 
       <Formik
         initialValues={initialValues}
-        // validationSchema={PromotionSchema}
+        validationSchema={PromotionSchema}
         onSubmit={handleSubmit}
         enableReinitialize
       >
