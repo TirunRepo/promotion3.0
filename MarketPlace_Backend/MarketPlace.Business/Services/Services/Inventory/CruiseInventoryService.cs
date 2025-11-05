@@ -99,9 +99,9 @@ namespace MarketPlace.Business.Services.Services.Inventory
             }
         }
 
-        public async Task<PagedData<CruiseInventoryResponse>> GetList(int page, int pageSize,string role)
+        public async Task<PagedData<CruiseInventoryResponse>> GetList(int page, int pageSize,string role, int? userId)
         {
-            var inventories = await _cruiseInventoryRepository.GetPagedAsync(page, pageSize, role);
+            var inventories = await _cruiseInventoryRepository.GetPagedAsync(page, pageSize, role, userId);
 
             var inventoryIds = inventories.Items.Select(x => x.Id).ToList();
 

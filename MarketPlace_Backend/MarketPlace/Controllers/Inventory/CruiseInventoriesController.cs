@@ -296,7 +296,7 @@ namespace Marketplace.API.Controllers.Inventory
             // Retrieve the user from the repository
             var user = await _userRepository.GetByEmailAsync(userId!);
             var role = user?.Role; 
-            var result = await _cruiseInventoryService.GetList(page, pageSize, role);
+            var result = await _cruiseInventoryService.GetList(page, pageSize, role, user?.Id);
             return Ok(result);
         }
 

@@ -507,7 +507,7 @@ const CruiseInventoryManager: React.FC = () => {
         </Col>
       </Row>
 
-      {agentModelVisible && (
+      {agentModelVisible && selectedInventory && (
         <AgentPromotions
           show={agentModelVisible}
           onHide={() => setAgentModalVisible(false)}

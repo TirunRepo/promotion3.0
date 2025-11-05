@@ -19,10 +19,6 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
     ICruisePromotionPricing[]
   >([]);
 
-  console.log("Agent Promotions inventory:", inventory);
-
-  console.log("Agent Promotions inventory id:", inventory?.id);
-
   useEffect(() => {
     CruisePromotionPricingService.getByCruiseInventory(inventory?.id ?? 0)
       .then(setCruisePromotionPricing)
@@ -40,49 +36,11 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>{"Cruise Pricing Promotion"}</Modal.Title>
+          <Modal.Title>{"Cruise Pricing  Promotion"}</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="px-4 py-3">
-          {/* <Table
-            hover
-            responsive
-            striped
-            bordered
-            className="align-middle text-center"
-          >
-            <thead className="table-light">
-              <tr>
-                <th>Departure Port</th>
-                <th>Destination</th>
-                <th>Sail Date</th>
-                <th>Ship Code</th>
-                <th>Cruise Line</th>
-                <th>Commission Rate</th>
-                <th>Single Price</th>
-                <th>Double Price</th>
-                <th>Triple Price</th>
-                <th>Total Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  {getDeparturePortName(inventory?.departurePortId ?? "")}
-                </td>
-                <td>{getDestinationName(inventory?.destinationId ?? "")}</td>
-                <td>{dayjs(inventory?.sailDate).format("DD-MM-YYYY")}</td>
-                <td>{inventory?.shipCode || "-"}</td>
-                <td>{getCruiseLineName(inventory?.cruiseLineId ?? "")}</td>
-                <td>{inventory?.commisionRate || "-"}</td>
-                <td>{inventory?.singlePrice || "-"}</td>
-                <td>{inventory?.doublePrice || "-"}</td>
-                <td>{inventory?.triplePrice || "-"}</td>
-                <td>{inventory?.triplePrice || "-"}</td>
-              </tr>
-            </tbody>
-          </Table> */}
-
+         
           <Row className="mb-3" style={{ gap: "10px" }}>
             <Col xs="auto">
               <Button variant="primary" onClick={() => {}}>
@@ -154,16 +112,9 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
             </Col>
           </Row>
         </Modal.Body>
-
-        {/* <Modal.Footer className="d-flex justify-content-end gap-2 px-4 py-3">
-          <Button variant="outline-secondary" onClick={onHide}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="primary">
-            Save
-          </Button>
-        </Modal.Footer> */}
       </Modal>
+
+
     </>
   );
 };

@@ -14,7 +14,7 @@ namespace MarketPlace.Business.Services.Interface.Inventory
     {
         Task<CruiseInventoryModel> Insert(CruiseInventoryRequest model);
         Task<CruiseInventoryModel> Update(int id , CruiseInventoryRequest model);
-        Task<PagedData<CruiseInventoryResponse>> GetList(int page, int pageSize, string role);
+        Task<PagedData<CruiseInventoryResponse>> GetList(int page, int pageSize, string role, int? userId);
         Task<CruiseInventoryModel> UpdateRoles(InventoryRoleUpdateRequest model);
         Task<PagedData<AgentInventoryReport>> GetAgentInventoryReportAsync(int agentId, int page, int pageSize);
 

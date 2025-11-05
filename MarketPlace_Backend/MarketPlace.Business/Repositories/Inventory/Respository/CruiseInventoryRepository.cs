@@ -72,12 +72,15 @@ namespace MarketPlace.DataAccess.Repositories.Inventory.Respository
                 throw new Exception($"DB Update failed: {dbEx.InnerException?.Message ?? dbEx.Message}", dbEx);
             }
         }
-        public async Task<PagedData<CruiseInventory>> GetPagedAsync(int page, int pageSize, string role)
+        public async Task<PagedData<CruiseInventory>> GetPagedAsync(int page, int pageSize, string role, int? userId)
         {
             var query = _context.CruiseInventories.AsQueryable();
-            if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
-                query = query.Where(x => x.EnableAdmin);
-
+            if (role != null && role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+               query = query.Where(x => x.EnableAdmin);
+            if(userId != null)
+            {
+            query = query.Where(it => it.CreatedBy == userId);
+            }
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
