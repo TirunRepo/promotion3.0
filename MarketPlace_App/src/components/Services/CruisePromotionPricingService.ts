@@ -29,10 +29,12 @@ class CruisePromotionPricingService {
         ApiUtility.getResult<ICruisePromotionPricing[]>(`${this._route}/GetById`, Id);
 
     getByCruiseInventory = (CruiseInventoryId: number) =>
-    ApiUtility.getResult<ICruisePromotionPricing[]>(
-        `${this._route}/GetByCruiseInventory`,
-        { CruiseInventoryId }
-    );
+        ApiUtility.getResult<ICruisePromotionPricing[]>(
+            `${this._route}/GetByCruiseInventory`,
+            { CruiseInventoryId }
+        );
+
+    delete = (Id: number) => ApiUtility.delete(`${this._route}/Delete/${Id}`);
 
 
 }

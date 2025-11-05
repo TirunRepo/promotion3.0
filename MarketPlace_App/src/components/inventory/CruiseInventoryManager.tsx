@@ -42,9 +42,9 @@ const CruiseInventoryManager: React.FC = () => {
 
   // New states for names
   const [destinations, setDestinations] = useState<IIdNameModel<number>[]>([]);
-  const [departurePorts, setDeparturePorts] = useState<IIdNameModel<number>[]>(
-    []
-  );
+
+  const [departurePorts, setDeparturePorts] = useState<IIdNameModel<number>[]>([]);
+
   const [cruiseLines, setCruiseLines] = useState<IIdNameModel<number>[]>([]);
   const [promotions, setPromotions] = useState<IPromotionResponse[]>([]);
 

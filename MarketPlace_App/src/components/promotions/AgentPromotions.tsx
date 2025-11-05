@@ -9,6 +9,9 @@ import CruisePromotionPricingService from "../Services/CruisePromotionPricingSer
 import AddAgentPromotion from "./AddAgentPromotion";
 import CruiseService from "../Services/CruiseService";
 import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
+import ConfirmationModal from "../../common/ConfirmationModal";
+import LoadingOverlay from "../../common/LoadingOverlay";
+import { useToast } from "../../common/Toaster";
 
 interface AgentPromotionProps {
   show: boolean;
@@ -32,6 +35,23 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   const [promotionToDelete, setPromotionToDelete] = useState<number | null>(
     null
   );
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { showToast } = useToast();
+
+  const fetchInventories = async (id: number) => {
+    setLoading(true);
+    try {
+      const res = await CruisePromotionPricingService.getByCruiseInventory(id);
+      setCruisePromotionPricing(res);
+    } catch (err) {
+      console.error("Error fetching promotions:", err);
+      showToast("Failed to fetch promotions", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!inventory?.id) return;
@@ -59,13 +79,31 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
 
   const handleDelete = (id: number) => {
     setPromotionToDelete(id);
+    setDeleteModal(true);
   };
 
-  console.log("cruisePrincing", cruisePricing);
-  console.log("allPromotions", allPromotions);
+  // Handle delete
+  const handleDeleteConfirm = async () => {
+    if (!promotionToDelete || !inventory?.id) return;
+    setLoading(true);
+    try {
+      await CruisePromotionPricingService.delete(promotionToDelete);
+      await fetchInventories(inventory.id); // refresh data
+      showToast("Promotion deleted successfully", "success");
+    } catch (err) {
+      console.error("Error deleting promotion:", err);
+      showToast("Error deleting promotion", "error");
+    } finally {
+      setLoading(false);
+      setDeleteModal(false);
+      setPromotionToDelete(null);
+    }
+  };
 
   return (
     <>
+      <LoadingOverlay show={loading} />
+
       <Modal
         show={show}
         onHide={onHide}
@@ -165,6 +203,14 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
           promotionsGet={allPromotions}
         />
       )}
+
+      {/* Delete Confirmation */}
+      <ConfirmationModal
+        show={deleteModal}
+        onCancel={() => setDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        message="Are you sure you want to delete this promotion from inventory?"
+      />
     </>
   );
 };
