@@ -22,20 +22,11 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
 }) => {
   const [cruisePromotionPricing, setCruisePromotionPricing] = useState<ICruisePromotionPricing[]>([]);
   const [modalShow, setModalShow] = useState(false);
-//   const [selectedPromotion, setSelectedPromotion] = useState<ICruisePromotionPricing | null>(null);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-
-  useEffect(() => {
-    if (inventory?.id) {
-      CruisePromotionPricingService.getByCruiseInventory(inventory.id)
-        .then(setCruisePromotionPricing)
-        .catch(console.error);
-    }
   const [cruisePricing, setCruisePricing] = useState<ICruisePricing[]>([]);
-
-  const [cruisePromotionPricing, setCruisePromotionPricing] = useState<
-    ICruisePromotionPricing[]
-  >([]);
+  const [promotionToDelete, setPromotionToDelete] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     if (!inventory?.id) return;
@@ -60,6 +51,10 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
     setModalMode("edit");
     setModalShow(true);
   };
+
+  const handleDelete = (id : number) =>{
+    setPromotionToDelete(id);
+  }
 
   return (
     <>
@@ -123,9 +118,15 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                             >
                               Edit
                             </Button>
-                            <Button size="sm" variant="outline-danger">
-                              Delete
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline-danger"
+                                onClick={() => item.id && handleDelete(item.id)}
+                              >
+                                Delete
+                              </Button>
+                            </>
                           </td>
                         </tr>
                       ))
