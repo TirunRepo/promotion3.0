@@ -137,8 +137,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                 >
                   <thead className="table-light">
                     <tr>
-                      <th>Promo ID</th>
-                      <th>Cruise Inventory ID</th>
+                      <th>Promotion</th>
                       <th>Single Price</th>
                       <th>Double Price</th>
                       <th>Triple Price</th>
@@ -150,8 +149,11 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                     {cruisePromotionPricing.length ? (
                       cruisePromotionPricing.map((item) => (
                         <tr key={item.id ?? JSON.stringify(item)}>
-                          <td>{item.promotionId}</td>
-                          <td>{item.cruiseInventoryId}</td>
+                          <td>
+                            {allPromotions?.find(
+                              (promo) => promo.id === item.promotionId
+                            )?.promotionName || `#${item.promotionId}`}
+                          </td>
                           <td>{item.singlePrice}</td>
                           <td>{item.doublePrice}</td>
                           <td>{item.triplePrice}</td>
