@@ -54,5 +54,7 @@ namespace MarketPlace.Common.DTOs.ResponseModels.Promotions
         public DateTime CreatedDate { get; set; }
         public int? ModifyBy { get; set; }
         public DateTime? ModifyDate { get; set; }
+        public string CalculatedOn { get; set; } = String.Empty;
+        public string? DiscountType { get; set; }
     }
 }

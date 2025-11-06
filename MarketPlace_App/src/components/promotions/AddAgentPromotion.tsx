@@ -8,6 +8,7 @@ import type { ICruisePricing } from "../Services/CruiseService";
 import CruisePromotionPricingService from "../Services/CruisePromotionPricingService";
 import { useToast } from "../../common/Toaster";
 import LoadingOverlay from "../../common/LoadingOverlay";
+import { PromotionUtility } from "../../utility/PromotionUtility";
 
 interface AddAgentPromotionProps {
   show: boolean;
@@ -15,34 +16,11 @@ interface AddAgentPromotionProps {
   mode: "add" | "edit";
   promotionsGet?: IPromotionResponse[];
   cruisePricing: ICruisePricing;
-  setCruisePromotionPricing: React.Dispatch<React.SetStateAction<ICruisePromotionPricing[]>>;
+  setCruisePromotionPricing: React.Dispatch<
+    React.SetStateAction<ICruisePromotionPricing[]>
+  >;
+  selectedCruisePromotionPricing: ICruisePromotionPricing;
 }
-
-// Yup Validation Schema
-const PromotionSchema = Yup.object().shape({
-  promotionId: Yup.number().required("Promotion ID is required"),
-  cruiseInventoryId: Yup.number().required("Cruise Inventory ID is required"),
-  pricingType: Yup.string().required("Pricing Type is required"),
-  commisionRate: Yup.number().required("Commission Rate is required"),
-  singlePrice: Yup.number().required("Single Price is required"),
-  doublePrice: Yup.number().required("Double Price is required"),
-  triplePrice: Yup.number().required("Triple Price is required"),
-  currencyType: Yup.string().required("Currency Type is required"),
-  cabinOccupancy: Yup.string().required("Cabin Occupancy is required"),
-  tax: Yup.number().required("Tax is required"),
-  grats: Yup.number().required("Grats is required"),
-  nccf: Yup.number().required("NCCF is required"),
-  commisionSingleRate: Yup.number().required(
-    "Commission Single Rate is required"
-  ),
-  commisionDoubleRate: Yup.number().required(
-    "Commission Double Rate is required"
-  ),
-  commisionTripleRate: Yup.number().required(
-    "Commission Triple Rate is required"
-  ),
-  totalPrice: Yup.number().required("Total Price is required"),
-});
 
 const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
   show,
@@ -50,55 +28,86 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
   mode,
   promotionsGet,
   cruisePricing,
-  setCruisePromotionPricing
+  setCruisePromotionPricing,
+  selectedCruisePromotionPricing,
 }) => {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
   // Default / Initial values
-  const initialValues: ICruisePromotionPricing = {
-    id: 0,
-    promotionId: 0,
-    cruiseInventoryId: cruisePricing.cruiseInventoryId ?? 0,
-    pricingType: cruisePricing.pricingType ?? "",
-    commisionRate: cruisePricing.commisionRate ?? 0,
-    singlePrice: cruisePricing.singlePrice ?? 0,
-    doublePrice: cruisePricing.doublePrice ?? 0,
-    triplePrice: cruisePricing.triplePrice ?? 0,
-    currencyType: cruisePricing.currencyType ?? "",
-    cabinOccupancy: cruisePricing.cabinOccupancy ?? "",
-    tax: cruisePricing.tax ?? 0,
-    grats: cruisePricing.grats ?? 0,
-    nccf: cruisePricing.nccf ?? 0,
-    commisionSingleRate: cruisePricing.singlePrice ?? 0,
-    commisionDoubleRate: cruisePricing.doublePrice ?? 0,
-    commisionTripleRate: cruisePricing.triplePrice ?? 0,
-    totalPrice: cruisePricing.totalPrice ?? 0,
+
+  const getInitialValues = (): ICruisePromotionPricing => {
+    let initialValue: ICruisePromotionPricing = {} as ICruisePromotionPricing;
+    if (mode == "add") {
+      initialValue = {
+        id: 0,
+        promotionId: 0,
+        cruiseInventoryId: cruisePricing.cruiseInventoryId ?? 0,
+        pricingType: cruisePricing.pricingType ?? "",
+        commisionRate: cruisePricing.commisionRate ?? 0,
+        basePrice: PromotionUtility.calculateBasePrice(cruisePricing),
+        currencyType: cruisePricing.currencyType ?? "",
+        cabinOccupancy: cruisePricing.cabinOccupancy ?? "",
+        tax: cruisePricing.tax ?? 0,
+        grats: cruisePricing.grats ?? 0,
+        nccf: cruisePricing.nccf ?? 0,
+        commisionSingleRate: cruisePricing.singlePrice ?? 0,
+        commisionDoubleRate: cruisePricing.doublePrice ?? 0,
+        commisionTripleRate: cruisePricing.triplePrice ?? 0,
+        totalPrice: cruisePricing.totalPrice ?? 0,
+      };
+    } else if (mode == "edit") {
+      initialValue = {
+        id: selectedCruisePromotionPricing.id,
+        promotionId: selectedCruisePromotionPricing.promotionId,
+        cruiseInventoryId: selectedCruisePromotionPricing.cruiseInventoryId,
+        pricingType: selectedCruisePromotionPricing.pricingType,
+        commisionRate: selectedCruisePromotionPricing.commisionRate,
+        basePrice: selectedCruisePromotionPricing.basePrice,
+        currencyType: selectedCruisePromotionPricing.currencyType,
+        cabinOccupancy: selectedCruisePromotionPricing.cabinOccupancy,
+        tax: selectedCruisePromotionPricing.tax,
+        grats: selectedCruisePromotionPricing.grats,
+        nccf: selectedCruisePromotionPricing.nccf,
+        commisionSingleRate: selectedCruisePromotionPricing.commisionSingleRate,
+        commisionDoubleRate: selectedCruisePromotionPricing.commisionDoubleRate,
+        commisionTripleRate: selectedCruisePromotionPricing.commisionTripleRate,
+        totalPrice: selectedCruisePromotionPricing.totalPrice,
+      };
+    }
+    return initialValue;
   };
 
-   const fetchInventories = async (id: number) => {
-      setLoading(true);
-      try {
-        const res = await CruisePromotionPricingService.getByCruiseInventory(id);
-        setCruisePromotionPricing(res);
-      } catch (err) {
-        console.error("Error fetching promotions:", err);
-        showToast("Failed to fetch promotions", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPromotions = async (id: number) => {
+    setLoading(true);
+    try {
+      const res = await CruisePromotionPricingService.getByCruiseInventory(id);
+      setCruisePromotionPricing(res);
+    } catch (err) {
+      console.error("Error fetching promotions:", err);
+      showToast("Failed to fetch promotions", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (values: ICruisePromotionPricing) => {
     setLoading(true);
     try {
       if (mode === "edit") {
-        // await CruisePromotionPricingService.update(values);
+        await CruisePromotionPricingService.update(values);
+        showToast("Promotion updated successfully", "success");
+        if (values.cruiseInventoryId) {
+          await fetchPromotions(values.cruiseInventoryId);
+        }
+        setTimeout(() => {
+          onHide();
+        }, 800);
       } else {
         await CruisePromotionPricingService.insert(values);
         showToast("Promotion added successfully", "success");
-         if (values.cruiseInventoryId) {
-        await fetchInventories(values.cruiseInventoryId);
-      }
+        if (values.cruiseInventoryId) {
+          await fetchPromotions(values.cruiseInventoryId);
+        }
         setTimeout(() => {
           onHide();
         }, 800);
@@ -110,6 +119,36 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
       showToast("Failed to add promotion", "error");
     }
   };
+
+  const handlePromoChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    setFieldValue: (field: string, value: any) => void
+  ) => {
+    const selectedPromoId = Number(e.target.value);
+    if (!selectedPromoId) return;
+
+    // 1️⃣ Get the full promotion object from the list
+    const selectedPromo = promotionsGet?.find((p) => p.id === selectedPromoId);
+    if (!selectedPromo) return;
+
+    // 2️⃣ Calculate new pricing using the utility
+    const calculatedPricing = PromotionUtility.calculatePricing(
+      selectedPromo,
+      cruisePricing
+    );
+
+    // 3️⃣ Update Formik values
+    setFieldValue("promotionId", selectedPromoId);
+    for (const [key, val] of Object.entries(calculatedPricing)) {
+      setFieldValue(key, val);
+    }
+  };
+
+  const getCalculatedOn = (promotionId: number) => {
+    return promotionsGet?.find((promo) => promo.id === promotionId)
+      ?.calculatedOn;
+  };
+
   return (
     <div className="mt-4">
       <LoadingOverlay show={loading} />
@@ -121,14 +160,13 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
         </Modal.Header>
 
         <Formik
-          initialValues={initialValues}
-          validationSchema={PromotionSchema}
+          initialValues={getInitialValues()}
           onSubmit={handleSubmit}
           enableReinitialize
         >
           {({
             handleSubmit,
-            handleChange,
+            setFieldValue,
             values,
             errors,
             touched,
@@ -152,7 +190,9 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
                           <Form.Select
                             name="promotionId"
                             value={values.promotionId}
-                            onChange={handleChange}
+                            onChange={(e) =>
+                              handlePromoChange(e, setFieldValue)
+                            }
                             onBlur={handleBlur}
                             isInvalid={
                               !!touched.promotionId && !!errors.promotionId
@@ -175,56 +215,28 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
                         </Form.Group>
                       </Col>
 
-                      {/* --- Cruise Inventory ID --- */}
                       <Col lg={4} md={6} xs={12}>
-                        <Form.Group controlId="cruiseInventoryId">
-                          <Form.Label>cruise Inventory ID</Form.Label>
-                          <Form.Control
-                            type="number"
-                            name="cruiseInventoryId"
-                            value={values.cruiseInventoryId}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={
-                              !!touched.cruiseInventoryId &&
-                              !!errors.cruiseInventoryId
-                            }
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            <ErrorMessage name="cruiseInventoryId" />
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </Col>
-
-                      {/* --- Pricing Type --- */}
-                      <Col lg={4} md={6} xs={12}>
-                        <Form.Group controlId="pricingType">
-                          <Form.Label>pricing Type</Form.Label>
+                        <Form.Group controlId="calculatedOn">
+                          <Form.Label>Calculated On</Form.Label>
                           <Form.Control
                             type="text"
-                            name="pricingType"
-                            value={values.pricingType}
-                            onChange={handleChange}
+                            name="calculatedOn"
+                            value={getCalculatedOn(values.promotionId)}
                             onBlur={handleBlur}
-                            isInvalid={
-                              !!touched.pricingType && !!errors.pricingType
-                            }
+                            disabled
                           />
-                          <Form.Control.Feedback type="invalid">
-                            <ErrorMessage name="pricingType" />
-                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
 
                       {/* --- Commission Rate --- */}
-                      <Col lg={4} md={6} xs={12}>
+                      {/* <Col lg={4} md={6} xs={12}>
                         <Form.Group controlId="commisionRate">
                           <Form.Label>commission Rate (%)</Form.Label>
                           <Form.Control
                             type="number"
                             name="commisionRate"
                             value={values.commisionRate ?? 0}
-                            onChange={handleChange}
+                            disabled
                             onBlur={handleBlur}
                             isInvalid={
                               !!touched.commisionRate && !!errors.commisionRate
@@ -234,43 +246,34 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
                             <ErrorMessage name="commisionRate" />
                           </Form.Control.Feedback>
                         </Form.Group>
-                      </Col>
+                      </Col> */}
 
                       {/* --- All Numeric Fields --- */}
-                      {[
-                        "singlePrice",
-                        "doublePrice",
-                        "triplePrice",
-                        "tax",
-                        "grats",
-                        "nccf",
-                        "commisionSingleRate",
-                        "commisionDoubleRate",
-                        "commisionTripleRate",
-                        "totalPrice",
-                      ].map((field) => (
-                        <Col lg={4} md={6} xs={12} key={field}>
-                          <Form.Group controlId={field}>
-                            <Form.Label>
-                              {field.replace(/([A-Z])/g, " $1")}
-                            </Form.Label>
-                            <Form.Control
-                              type="number"
-                              name={field}
-                              value={(values as any)[field]}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              isInvalid={
-                                !!touched[field as keyof typeof touched] &&
-                                !!errors[field as keyof typeof errors]
-                              }
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              <ErrorMessage name={field} />
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                        </Col>
-                      ))}
+                      {["basePrice", "tax", "grats", "nccf", "totalPrice"].map(
+                        (field) => (
+                          <Col lg={4} md={6} xs={12} key={field}>
+                            <Form.Group controlId={field}>
+                              <Form.Label>
+                                {field.replace(/([A-Z])/g, " $1")}
+                              </Form.Label>
+                              <Form.Control
+                                type="number"
+                                name={field}
+                                value={(values as any)[field]}
+                                onBlur={handleBlur}
+                                disabled
+                                isInvalid={
+                                  !!touched[field as keyof typeof touched] &&
+                                  !!errors[field as keyof typeof errors]
+                                }
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                <ErrorMessage name={field} />
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                        )
+                      )}
 
                       {/* --- Currency --- */}
                       <Col lg={4} md={6} xs={12}>
@@ -280,7 +283,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
                             type="text"
                             name="currencyType"
                             value={values.currencyType}
-                            onChange={handleChange}
+                            disabled
                             onBlur={handleBlur}
                             isInvalid={
                               !!touched.currencyType && !!errors.currencyType
@@ -300,7 +303,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
                             type="text"
                             name="cabinOccupancy"
                             value={values.cabinOccupancy}
-                            onChange={handleChange}
+                            disabled
                             onBlur={handleBlur}
                             isInvalid={
                               !!touched.cabinOccupancy &&
