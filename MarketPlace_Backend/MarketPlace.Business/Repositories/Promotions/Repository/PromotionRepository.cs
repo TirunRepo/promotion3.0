@@ -50,6 +50,8 @@ namespace MarketPlace.DataAccess.Repositories.Promotions.Repository
                     DestinationId = x.DestinationId,
                     CruiseLineId = x.CruiseLineId,
                     CruiseShipId = x.CruiseShipId,
+                    CalculatedOn = x.CalculatedOn,
+                    DiscountType = x.DiscountType
                 })
                 .ToListAsync();
         }

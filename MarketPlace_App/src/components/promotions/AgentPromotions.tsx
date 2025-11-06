@@ -31,13 +31,16 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   >([]);
   const [modalShow, setModalShow] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-  const [cruisePricing, setCruisePricing] = useState<ICruisePricing>({} as ICruisePricing);
+  const [cruisePricing, setCruisePricing] = useState<ICruisePricing>(
+    {} as ICruisePricing
+  );
   const [promotionToDelete, setPromotionToDelete] = useState<number | null>(
     null
   );
   const [deleteModal, setDeleteModal] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [selectedCruisePromotionPricing, setSelectedCruisePromotionPricing] =
+    useState<ICruisePromotionPricing>({} as ICruisePromotionPricing);
   const { showToast } = useToast();
 
   const fetchInventories = async (id: number) => {
@@ -74,7 +77,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
   };
 
   const handleEditClick = (item: ICruisePromotionPricing) => {
-    // setSelectedPromotion(item);
+    setSelectedCruisePromotionPricing(item);
     setModalMode("edit");
     setModalShow(true);
   };
@@ -84,7 +87,6 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
     setDeleteModal(true);
   };
 
-  // Handle delete
   const handleDeleteConfirm = async () => {
     if (!promotionToDelete || !inventory?.id) return;
     setLoading(true);
@@ -115,7 +117,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Cruise Pricing Promotion</Modal.Title>
+          <Modal.Title>Cruise Promotion Pricing</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="px-4 py-3">
@@ -140,9 +142,8 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                   <thead className="table-light">
                     <tr>
                       <th>Promotion</th>
-                      <th>Single Price</th>
-                      <th>Double Price</th>
-                      <th>Triple Price</th>
+                      <th>Applied On</th>
+                      <th>Base Price</th>
                       <th>Total Price</th>
                       <th style={{ minWidth: "140px" }}>Actions</th>
                     </tr>
@@ -156,9 +157,14 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                               (promo) => promo.id === item.promotionId
                             )?.promotionName || `#${item.promotionId}`}
                           </td>
-                          <td>{item.singlePrice}</td>
-                          <td>{item.doublePrice}</td>
-                          <td>{item.triplePrice}</td>
+                          <td>
+                            {
+                              allPromotions?.find(
+                                (promo) => promo.id === item.promotionId
+                              )?.calculatedOn
+                            }
+                          </td>
+                          <td>{item.basePrice}</td>
                           <td>{item.totalPrice}</td>
                           <td className="d-flex justify-content-center gap-2">
                             <Button
@@ -207,6 +213,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
           promotionsGet={allPromotions}
           cruisePricing={cruisePricing}
           setCruisePromotionPricing={setCruisePromotionPricing}
+          selectedCruisePromotionPricing={selectedCruisePromotionPricing}
         />
       )}
 

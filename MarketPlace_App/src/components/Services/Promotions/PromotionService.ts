@@ -36,6 +36,8 @@ export interface IPromotionRequest {
   destinationId?:any;
   cruiseLineId?:any
   groupId?:any
+  calculatedOn : string
+  discountType?: string
 }
 
 export interface IPromotionResponse extends IPromotionRequest {

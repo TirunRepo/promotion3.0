@@ -49,6 +49,8 @@ namespace MarketPlace.DataAccess.Entities.Promotions
         public bool? IsStackable { get; set; }
         [DefaultValue("true")]
         public bool IsActive { get; set; }
+        public string CalculatedOn { get; set; } = String.Empty;
+        public string? DiscountType { get; set; }
 
     }
 }

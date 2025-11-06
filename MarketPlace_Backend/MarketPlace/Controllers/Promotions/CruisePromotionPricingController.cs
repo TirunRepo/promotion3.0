@@ -51,7 +51,7 @@ namespace Marketplace.API.Controllers.Promotions
         [HttpPut("Update")]
         public async Task<ActionResult<APIResponse<CruisePromotionPricing>>> Update(CruisePromotionPricing CruisePromotionPricing)
         {
-            var data = await _cruisePromotionPricingService.InsertAsync(CruisePromotionPricing);
+            var data = await _cruisePromotionPricingService.UpdateAsync(CruisePromotionPricing);
 
             if (data == null)
                 return NotFound(APIResponse<CruisePromotionPricing>.Fail($"Cruise Promotion Pricing Not Updated."));

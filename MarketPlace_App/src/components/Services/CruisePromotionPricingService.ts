@@ -6,9 +6,7 @@ export interface ICruisePromotionPricing {
     cruiseInventoryId?: number;
     pricingType: string;
     commisionRate: number | null;
-    singlePrice: number | null;
-    doublePrice: number | null;
-    triplePrice?: number | null;
+    basePrice: number | null;
     currencyType: string;
     cabinOccupancy: string;
     tax: number | null;
@@ -34,10 +32,14 @@ class CruisePromotionPricingService {
             { CruiseInventoryId }
         );
 
-    delete = (Id: number) => ApiUtility.delete(`${this._route}/Delete/${Id}`);
-    
-     insert = (data: ICruisePromotionPricing) =>
+    insert = (data: ICruisePromotionPricing) =>
         ApiUtility.post<IApiResponse<ICruisePromotionPricing>>(`${this._route}/Insert`, data);
+
+    update = (data: ICruisePromotionPricing) =>
+        ApiUtility.put<IApiResponse<ICruisePromotionPricing>>(`${this._route}/Update`, data);
+
+    delete = (Id: number) => ApiUtility.delete(`${this._route}/Delete/${Id}`);
+
 
 
 }

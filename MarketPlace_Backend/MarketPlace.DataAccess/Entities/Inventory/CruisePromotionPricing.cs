@@ -14,13 +14,7 @@ namespace MarketPlace.DataAccess.Entities.Inventory
         public int CommisionRate { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal? SinglePrice { get; set; }
-
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal? DoublePrice { get; set; }
-
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal? TriplePrice { get; set; }
+        public decimal? BasePrice { get; set; }
 
         public string CurrencyType { get; set; }
         public required string CabinOccupancy { get; set; }
