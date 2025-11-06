@@ -35,6 +35,9 @@ class CruisePromotionPricingService {
         );
 
     delete = (Id: number) => ApiUtility.delete(`${this._route}/Delete/${Id}`);
+    
+     insert = (data: ICruisePromotionPricing) =>
+        ApiUtility.post<IApiResponse<ICruisePromotionPricing>>(`${this._route}/Insert`, data);
 
 
 }
