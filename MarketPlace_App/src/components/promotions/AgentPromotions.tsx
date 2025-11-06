@@ -206,6 +206,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
           mode={modalMode}
           promotionsGet={allPromotions}
           cruisePricing={cruisePricing}
+          setCruisePromotionPricing={setCruisePromotionPricing}
         />
       )}
 
