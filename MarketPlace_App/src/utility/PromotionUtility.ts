@@ -7,14 +7,13 @@ export const PromotionUtility = {
         promotion: IPromotionResponse,
         cruisePricing: ICruisePricing
     ): Partial<ICruisePromotionPricing> => {
-        // Example logic — replace with your actual formula
 
         let price: ICruisePromotionPricing = {
             id: 0,
             promotionId: promotion.id ?? 0,
             pricingType: cruisePricing.pricingType,
             commisionRate: cruisePricing.commisionRate,
-            basePrice: PromotionUtility.calculateBasePrice(cruisePricing),
+            basePrice: PromotionUtility.calculateBasePriceWithoutPromo(cruisePricing),
             currencyType: cruisePricing.currencyType,
             cabinOccupancy: cruisePricing.cabinOccupancy,
             tax: cruisePricing.tax,
@@ -26,21 +25,50 @@ export const PromotionUtility = {
             totalPrice: cruisePricing.totalPrice ?? 0
         }
 
-        switch (promotion.calculatedOn.toLowerCase().replace(/\s+/g, "")) {
-            case "basefare":
-                price.basePrice = PromotionUtility.calculateBasePriceAfterPromotion(promotion, cruisePricing);
-                break
-            case "basefare+nccf":
-                price.basePrice = PromotionUtility.calculateBasePriceAfterPromotion(promotion, cruisePricing);
-                price.nccf = PromotionUtility.calculateNCCFAfterPromotion(promotion, cruisePricing)
-                break
+        if (promotion.discountType?.toLowerCase().replace(/\s+/g, "") == "flat" && price.totalPrice) {
+            price.totalPrice = price.totalPrice - (promotion.discountAmount ?? 0);
+            return price;
         }
 
-        price.totalPrice = PromotionUtility.calculateTotalPriceAfterPromotion(price);
+        if (promotion.isBOGO && price.basePrice && price.totalPrice) {
+            let discountPrice = 0;
+            let count = 1;
+            switch (cruisePricing.cabinOccupancy.toLowerCase()) {
+                case "double":
+                    discountPrice = ((cruisePricing.doublePrice ?? 0) * (promotion.discountPer ?? 0)) / 100;
+                    break
+                case "triple":
+                    discountPrice = ((cruisePricing.doublePrice ?? 0) * (promotion.discountPer ?? 0)) / 100;
+                    discountPrice = discountPrice + (((cruisePricing.triplePrice ?? 0) * (promotion.discountPer ?? 0)) / 100);
+                    break
+                case "quad":
+                    count = 2;
+                    discountPrice = ((cruisePricing.doublePrice ?? 0) * (promotion.discountPer ?? 0)) / 100;
+                    discountPrice = discountPrice + (((cruisePricing.triplePrice ?? 0) * (promotion.discountPer ?? 0)) / 100);
+                    break
+            }
+            if (promotion.calculatedOn.toLowerCase().replace(/\s+/g, "") == "basefare+nccf") {
+                discountPrice = discountPrice + (count * PromotionUtility.calculateNCCFAfterPromotion(promotion, cruisePricing));
+            }
+            price.totalPrice = price.totalPrice - discountPrice;
+            return price;
+        }
+
+        if (promotion.discountType?.toLowerCase().replace(/\s+/g, "") == "percentage" && price.totalPrice) {
+
+            price.basePrice = PromotionUtility.calculateBasePrice(promotion, cruisePricing)
+
+            if (promotion.calculatedOn.toLowerCase().replace(/\s+/g, "") == "basefare+nccf") {
+                price.nccf = PromotionUtility.calculateNCCFAfterPromotion(promotion, cruisePricing);
+            }
+            price.totalPrice = PromotionUtility.calculateTotalPriceAfterPromotion(price);
+            return price;
+
+        }
 
         return price;
     },
-    calculateBasePrice: (
+    calculateBasePriceWithoutPromo: (
         cruisePricing: ICruisePricing
     ): number => {
 
@@ -58,22 +86,21 @@ export const PromotionUtility = {
 
         return basePrice;
     },
-    calculateBasePriceAfterPromotion: (
+    calculateBasePrice: (
         promotion: IPromotionResponse,
         cruisePricing: ICruisePricing
     ): number => {
-        let price = PromotionUtility.calculateBasePrice(cruisePricing);
+        let price = PromotionUtility.calculateBasePriceWithoutPromo(cruisePricing);
+        return price - ((price * (promotion.discountPer ?? 0)) / 100);
 
-        switch (promotion?.discountType?.toLocaleLowerCase().replace(/\s+/g, "")) {
-            case ("flat"):
-                price = price - (promotion.discountAmount ?? 0);
-                break;
-            case ("percent"):
-                price = price - ((price * (promotion.discountPer ?? 0)) / 100);
-                break;
-        }
+    },
+    calculateNCCFAfterPromotion: (
+        promotion: IPromotionResponse,
+        cruisePricing: ICruisePricing
+    ): number => {
+        let price = cruisePricing.nccf ?? 0;
+        return price - ((price * (promotion.discountPer ?? 0)) / 100);
 
-        return price;
     },
     calculateTotalPriceAfterPromotion: (
         pricing: ICruisePromotionPricing
@@ -94,20 +121,6 @@ export const PromotionUtility = {
         }
 
         let price = (pricing.basePrice ?? 0) + (count * (pricing.nccf ?? 0)) + (count * (pricing.tax ?? 0)) + (count * (pricing.grats ?? 0))
-
-        return price;
-    },
-    calculateNCCFAfterPromotion: (
-        promotion: IPromotionResponse,
-        cruisePricing: ICruisePricing
-    ): number => {
-        let price = cruisePricing.nccf ?? 0;
-
-        switch (promotion?.discountType?.toLocaleLowerCase().replace(/\s+/g, "")) {
-            case ("percent"):
-                price = price - ((price * (promotion.discountPer ?? 0)) / 100);
-                break;
-        }
 
         return price;
     },
