@@ -30,6 +30,10 @@ export const PromotionUtility = {
             case "basefare":
                 price.basePrice = PromotionUtility.calculateBasePriceAfterPromotion(promotion, cruisePricing);
                 break
+            case "basefare+nccf":
+                price.basePrice = PromotionUtility.calculateBasePriceAfterPromotion(promotion, cruisePricing);
+                price.nccf = PromotionUtility.calculateNCCFAfterPromotion(promotion, cruisePricing)
+                break
         }
 
         price.totalPrice = PromotionUtility.calculateTotalPriceAfterPromotion(price);
@@ -74,8 +78,37 @@ export const PromotionUtility = {
     calculateTotalPriceAfterPromotion: (
         pricing: ICruisePromotionPricing
     ): number => {
-        let price = (pricing.basePrice ?? 0) + (pricing.nccf ?? 0) + (pricing.tax ?? 0) + (pricing.grats ?? 0)
+
+        let count = 1;
+
+        switch (pricing.cabinOccupancy.toLowerCase()) {
+            case "double":
+                count = 2;
+                break
+            case "triple":
+                count = 3;
+                break
+            case "quad":
+                count = 4;
+                break
+        }
+
+        let price = (pricing.basePrice ?? 0) + (count * (pricing.nccf ?? 0)) + (count * (pricing.tax ?? 0)) + (count * (pricing.grats ?? 0))
 
         return price;
-    }
+    },
+    calculateNCCFAfterPromotion: (
+        promotion: IPromotionResponse,
+        cruisePricing: ICruisePricing
+    ): number => {
+        let price = cruisePricing.nccf ?? 0;
+
+        switch (promotion?.discountType?.toLocaleLowerCase().replace(/\s+/g, "")) {
+            case ("percent"):
+                price = price - ((price * (promotion.discountPer ?? 0)) / 100);
+                break;
+        }
+
+        return price;
+    },
 };
