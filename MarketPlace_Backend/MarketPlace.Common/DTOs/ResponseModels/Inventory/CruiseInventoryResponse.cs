@@ -60,6 +60,7 @@ namespace MarketPlace.Common.DTOs.ResponseModels.Inventory
         public required string CabinOccupancy { get; set; }
 
         public decimal? TotalPrice { get; set; }
+        public int? AppliedPromotionCount { get; set; }
 
     }
 
