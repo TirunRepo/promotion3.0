@@ -49,6 +49,7 @@ export interface ICruiseInventory {
   commisionDoubleRate?: number | null;
   commisionTripleRate?: number | null;
   totalPrice?: number | null;
+  deckImagesBase64?: string[];
 }
 
 // Pricing model
@@ -104,12 +105,15 @@ export interface IAgentInventoryReport {
   totalCabins: number;
   holdCabins: number;
   availableCabins: number;
-  basePrice: number;
-  markupPrice: number;
+  baseFare: number;
+  markupMode: string;
+   markUpPercentage: number;
+  markUpFlatAmount: number;
   createdBy: number;
   updatedBy: number;
   createdOn: string;
   updatedOn: string;
+  
 }
 
 // ----------------------------

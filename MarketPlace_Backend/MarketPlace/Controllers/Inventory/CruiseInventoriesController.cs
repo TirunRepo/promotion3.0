@@ -302,6 +302,7 @@ namespace Marketplace.API.Controllers.Inventory
             return Ok(result);
         }
 
+
         [HttpGet("destination")]
         public async Task<IActionResult> GetDestination()
         {
