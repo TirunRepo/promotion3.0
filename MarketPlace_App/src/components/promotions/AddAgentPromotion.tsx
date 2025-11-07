@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Form, Card, Row, Col, Button } from "react-bootstrap";
 import { ErrorMessage, Formik } from "formik";
-import * as Yup from "yup";
 import type { ICruisePromotionPricing } from "../Services/CruisePromotionPricingService";
 import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
 import type { ICruisePricing } from "../Services/CruiseService";
@@ -31,9 +30,9 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
   setCruisePromotionPricing,
   selectedCruisePromotionPricing,
 }) => {
+
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-  // Default / Initial values
 
   const getInitialValues = (): ICruisePromotionPricing => {
     let initialValue: ICruisePromotionPricing = {} as ICruisePromotionPricing;
@@ -44,7 +43,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
         cruiseInventoryId: cruisePricing.cruiseInventoryId ?? 0,
         pricingType: cruisePricing.pricingType ?? "",
         commisionRate: cruisePricing.commisionRate ?? 0,
-        basePrice: PromotionUtility.calculateBasePrice(cruisePricing),
+        basePrice: PromotionUtility.calculateBasePriceWithoutPromo(cruisePricing),
         currencyType: cruisePricing.currencyType ?? "",
         cabinOccupancy: cruisePricing.cabinOccupancy ?? "",
         tax: cruisePricing.tax ?? 0,
@@ -94,6 +93,7 @@ const AddAgentPromotion: React.FC<AddAgentPromotionProps> = ({
     setLoading(true);
     try {
       if (mode === "edit") {
+        values.id = selectedCruisePromotionPricing.id;
         await CruisePromotionPricingService.update(values);
         showToast("Promotion updated successfully", "success");
         if (values.cruiseInventoryId) {
