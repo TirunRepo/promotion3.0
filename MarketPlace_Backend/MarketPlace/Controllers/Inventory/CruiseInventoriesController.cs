@@ -1,4 +1,5 @@
-﻿using MarketPlace.Business.Services.Interface;
+﻿using MarketPlace.Business.Repositories.Inventory.Interface;
+using MarketPlace.Business.Services.Interface;
 using MarketPlace.Business.Services.Interface.Inventory;
 using MarketPlace.Business.Services.Services.Inventory;
 using MarketPlace.Common.APIResponse;
@@ -8,10 +9,12 @@ using MarketPlace.Common.DTOs.ResponseModels.Inventory;
 using MarketPlace.Common.PagedData;
 using MarketPlace.DataAccess.DBContext;
 using MarketPlace.DataAccess.Entities.Inventory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;    
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace Marketplace.API.Controllers.Inventory
 {
@@ -23,17 +26,22 @@ namespace Marketplace.API.Controllers.Inventory
         private readonly ICruisePricingService _cruisePricingService;
         public readonly IUserRepository _userRepository;
         public readonly ICruiseCabinService _cruiseCabinService;
-        
+        private readonly ICruiseDeckImageRepository _cruiseDeckDetailsRepository;
+
+
+
         public readonly AppDbContext _context;
         public CruiseInventoriesController(
             ICruiseInventoryService cruiseInventoryService,
-            ICruisePricingService cruisePricingCabinService, IUserRepository userRepository, ICruiseCabinService cruiseCabinService, AppDbContext context)
+            ICruisePricingService cruisePricingCabinService, IUserRepository userRepository, ICruiseCabinService cruiseCabinService, ICruiseDeckImageRepository cruiseDeckDetailsRepository, AppDbContext context )
         {
             _cruiseInventoryService = cruiseInventoryService;
             _cruisePricingService = cruisePricingCabinService;
             _userRepository = userRepository;
             _cruiseCabinService = cruiseCabinService;
+            _cruiseDeckDetailsRepository = cruiseDeckDetailsRepository;
             _context = context;
+           
         }
 
 
@@ -642,6 +650,71 @@ namespace Marketplace.API.Controllers.Inventory
 
             return Ok(APIResponse<CruisePricing>.Ok(data));
         }
+
+        [HttpPost("upload-images")]
+        [Authorize]
+        public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files)
+        {
+            if (files == null || files.Count == 0)
+                return BadRequest(new { success = false, message = "No files selected" });
+
+            string? agentFolder = User?.FindFirst("fullName")?.Value
+                                ?? User?.FindFirst("companyName")?.Value
+                                ?? User?.FindFirst(ClaimTypes.Name)?.Value
+                                ?? User?.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrWhiteSpace(agentFolder))
+            {
+                var userIdClaim = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrWhiteSpace(userIdClaim) && int.TryParse(userIdClaim, out var userId))
+                {
+                    var user = await _userRepository.GetByIdAsync(userId);
+                    if (user != null)
+                        agentFolder = user.CompanyName ?? user.FullName ?? user.Email;
+                }
+            }
+
+            agentFolder ??= "unknown";
+
+            agentFolder = Regex.Replace(agentFolder, @"[^\w\-]", "_");
+
+            var uploadPath = Path.Combine("C:\\promotion3.0", "images", "decks", agentFolder);
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var uploadedImages = new List<object>();
+
+            foreach (var file in files)
+            {
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(extension) || file.Length > 5 * 1024 * 1024)
+                    continue;
+
+                var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{Guid.NewGuid():N}{extension}";
+                var filePath = Path.Combine(uploadPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var imageUrl = $"{Request.Scheme}://{Request.Host}/images/decks/{agentFolder}/{fileName}";
+                uploadedImages.Add(new { fileName, imageUrl });
+            }
+
+            if (uploadedImages.Count == 0)
+                return BadRequest(new { success = false, message = "No valid image files uploaded" });
+
+            return Ok(new
+            {
+                success = true,
+                message = "Images uploaded successfully",
+                images = uploadedImages
+            });
+        }
+
 
     }
 }

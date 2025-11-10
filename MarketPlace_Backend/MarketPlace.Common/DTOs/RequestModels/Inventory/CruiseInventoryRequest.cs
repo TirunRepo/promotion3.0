@@ -38,6 +38,7 @@ namespace MarketPlace.Common.DTOs.RequestModels.Inventory
         public required string Stateroom { get; set; }
         public bool EnableAdmin { get; set; }
         public bool EnableAgent { get; set; }
+        public List<string>? DeckImages { get; set; }
 
     }
 }

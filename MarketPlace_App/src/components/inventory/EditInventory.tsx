@@ -12,6 +12,7 @@ import { Eye } from "react-bootstrap-icons";
 import { MdDelete } from "react-icons/md";
 
 import ImageLightbox from "../../common/ImagePreview";
+import { useToast } from "../../common/Toaster";
 
 interface EditInventoryProps {
   show: boolean;
@@ -57,7 +58,7 @@ const emptyInventory = (): ICruiseInventory => ({
   cabinDetails: [],
   enableAdmin: false,
   enableAgent: false,
-  deckImagesBase64: [],
+  deckImages: [],
 });
 
 const normalizeInventory = (inv: ICruiseInventory): ICruiseInventory => {
@@ -82,7 +83,7 @@ const normalizeInventory = (inv: ICruiseInventory): ICruiseInventory => {
     cruiseShipId: inv.cruiseShipId ?? 0,
     cabinDetails: inv.cabinDetails ?? [],
     enableAdmin: inv.enableAdmin,
-    deckImagesBase64: (inv as any).deckImagesBase64 ?? [],
+    deckImages: (inv as any).deckImages ?? [],
   };
 };
 
@@ -111,14 +112,28 @@ const EditInventory: React.FC<EditInventoryProps> = ({
   const isAdmin = role === "Admin";
   const isAgent = role === "Agent";
   const MAX_IMAGES = 5;
+  const { showToast } = useToast();
 
+  //image upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    const nonImageFiles = files.filter((file) => !file.type.startsWith("image/"));
+    nonImageFiles.forEach((file) => {
+    showToast(
+      `${file.name} is not allowed file type.`, "error"
+    );
+  });
+  
     if (files.length === 0) return;
 
+   const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+    if (imageFiles.length === 0) {
+    e.target.value = "";
+    return;
+  }
     const newFiles = files.slice(0, MAX_IMAGES - uploadedImages.length);
     if (newFiles.length < files.length) {
-      alert(
+      showToast(
         `Only ${MAX_IMAGES} images allowed. Added ${newFiles.length} images.`
       );
     }
@@ -142,43 +157,45 @@ const EditInventory: React.FC<EditInventoryProps> = ({
 
       setForm((prev) => ({
         ...prev,
-        deckImagesBase64: updatedImages.map((img) => img.preview),
+        deckImages: updatedImages.map((img) => img.preview),
       }));
 
       e.target.value = "";
     });
   };
 
+  //preview image
   const handlePreviewClick = (preview: string) => {
     setSelectedPreview(preview);
     setShowPreview(true);
   };
 
+  // close image preview
   const closePreview = () => {
     setShowPreview(false);
     setSelectedPreview(null);
   };
 
+  // remove image
   const removeImage = (index: number) => {
     const updatedImages = uploadedImages.filter((_, i) => i !== index);
     setUploadedImages(updatedImages);
 
     setForm((prev) => ({
       ...prev,
-      deckImagesBase64: updatedImages.map((img) => img.preview),
+      deckImages: updatedImages.map((img) => img.preview),
     }));
   };
+
+  console.log("preview", uploadedImages);
 
   useEffect(() => {
     if (inventory) {
       const normalized = normalizeInventory(inventory);
       setForm(normalized);
-      if (
-        normalized.deckImagesBase64 &&
-        normalized.deckImagesBase64.length > 0
-      ) {
+      if (normalized.deckImages && normalized.deckImages.length > 0) {
         setUploadedImages(
-          normalized.deckImagesBase64.map((base64, i) => ({
+          normalized.deckImages.map((base64, i) => ({
             name: `image_${i + 1}.jpg`,
             preview: base64,
           }))
@@ -225,6 +242,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
       setShips([]);
     }
   }, [form.cruiseLineId]);
+
   useEffect(() => {
     if (form.cruiseShipId) {
       const shipCode =
@@ -594,7 +612,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                       <Form.Label>Deck Images</Form.Label>
                       <Form.Control
                         type="file"
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/jpg, image/gif"
                         multiple={true}
                         disabled={
                           isAdmin || uploadedImages.length >= MAX_IMAGES
