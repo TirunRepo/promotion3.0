@@ -14,12 +14,12 @@ namespace MarketPlace.Business.Repositories.Inventory.Respository
 
         public async Task<List<CruisePromotionPricing>> GetByCruiseInventoryAsync(int cruiseInventoryId)
         {
-             return await _context.CruisePromotionPricing
-                .Where(x => x.CruiseInventoryId == cruiseInventoryId)
-                .ToListAsync();
+            return await _context.CruisePromotionPricing
+               .Where(x => x.CruiseInventoryId == cruiseInventoryId)
+               .ToListAsync();
         }
 
-        public async Task<CruisePromotionPricing> InsertAsync(CruisePromotionPricing cruisePromotionPricing) 
+        public async Task<CruisePromotionPricing> InsertAsync(CruisePromotionPricing cruisePromotionPricing)
         {
             _context.CruisePromotionPricing.Add(cruisePromotionPricing);
             await _context.SaveChangesAsync();
@@ -33,7 +33,7 @@ namespace MarketPlace.Business.Repositories.Inventory.Respository
             return cruisePromotionPricing;
         }
 
-        public async Task DeleteAsync(int cruisePromotionPricingId) 
+        public async Task DeleteAsync(int cruisePromotionPricingId)
         {
             var entity = await _context.CruisePromotionPricing.FindAsync(cruisePromotionPricingId);
             if (entity != null)
@@ -42,6 +42,11 @@ namespace MarketPlace.Business.Repositories.Inventory.Respository
                 await _context.SaveChangesAsync();
             }
         }
-    
+
+        public async Task<int> GetCountByCruiseInventoryAsync(int cruiseInventoryId)
+        {
+            return await _context.CruisePromotionPricing
+                .CountAsync(x => x.CruiseInventoryId == cruiseInventoryId);
+        }
     }
 }

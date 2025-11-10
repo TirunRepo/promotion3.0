@@ -14,6 +14,11 @@ export interface Ship {
   cruiseLineId?: number;
 }
 
+export interface ICruiseShip {
+  id: number;
+  name: string;
+}
+
 
 
 class CruiseShipsService {
@@ -25,13 +30,16 @@ class CruiseShipsService {
   addShip = (data: Ship) =>
     ApiUtility.post<IApiResponse<Ship>>(this.route, data);
 
-  updateShip = (id:number,data: Ship) =>
+  updateShip = (id: number, data: Ship) =>
     ApiUtility.post<IApiResponse<Ship>>(`${this.route}/update/${id}`, data);
 
   deleteShip = (id: number) =>
     ApiUtility.delete<IApiResponse<boolean>>(`${this.route}/${id}`);
 
-  getCruiseLines = () => ApiUtility.get<CruiseLineD>(`${this.route}/CruiseLines`,{})
+  getCruiseLines = () => ApiUtility.get<CruiseLineD>(`${this.route}/CruiseLines`, {})
+
+  getAllShips = () =>
+    ApiUtility.get<IApiResponse<ICruiseShip[]>>(`${this.route}/GetAll`);
 
 }
 

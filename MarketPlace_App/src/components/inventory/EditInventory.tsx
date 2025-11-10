@@ -707,7 +707,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                     name="currencyType"
                     value={form.currencyType}
                     onChange={handleChange}
-                    disabled={isAdmin}
+                    disabled={isAdmin || (form.id ?? 0) > 0}
                   >
                     <option value="">-- Select Currency --</option>
                     <option value="USD">USD</option>
@@ -723,7 +723,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                       inline
                       type="radio"
                       name="pricingType"
-                      disabled={isAdmin}
+                      disabled={isAdmin || (form.id ?? 0) > 0}
                       value="Net"
                       checked={form.pricingType === "Net"}
                       onChange={handleChange}
@@ -770,7 +770,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                   {form.cabinOccupancy === "Single" && (
                     <Col md={4}>
                       <Form.Group controlId="singlePrice">
-                        <Form.Label>Single Rate</Form.Label>
+                        <Form.Label>Single Rate Per Guest</Form.Label>
                         <Form.Control
                           type="text"
                           disabled={isAdmin}
@@ -794,7 +794,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                     <>
                       <Col md={4}>
                         <Form.Group controlId="singlePrice">
-                          <Form.Label>Single Rate</Form.Label>
+                          <Form.Label>Single Rate Per Guest</Form.Label>
                           <Form.Control
                             type="text"
                             disabled={isAdmin}
@@ -816,7 +816,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
 
                       <Col md={4}>
                         <Form.Group controlId="doublePrice">
-                          <Form.Label>Double Rate</Form.Label>
+                          <Form.Label>Double Rate Per Guest</Form.Label>
                           <Form.Control
                             type="text"
                             disabled={isAdmin}
@@ -843,7 +843,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                     <>
                       <Col md={4}>
                         <Form.Group controlId="singlePrice">
-                          <Form.Label>Single Rate</Form.Label>
+                          <Form.Label>Single Rate Per Guest</Form.Label>
                           <Form.Control
                             type="text"
                             disabled={isAdmin}
@@ -864,7 +864,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                       </Col>
                       <Col md={4}>
                         <Form.Group controlId="doublePrice">
-                          <Form.Label>Double Rate</Form.Label>
+                          <Form.Label>Double Rate Per Guest</Form.Label>
                           <Form.Control
                             type="text"
                             disabled={isAdmin}
@@ -885,7 +885,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                       </Col>
                       <Col md={4}>
                         <Form.Group controlId="triplePrice">
-                          <Form.Label>Triple Rate</Form.Label>
+                          <Form.Label>Triple Rate Per Guest</Form.Label>
                           <Form.Control
                             type="text"
                             disabled={isAdmin}
@@ -911,7 +911,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                 <Row className="mt-3 g-3">
                   <Col md={4}>
                     <Form.Group controlId="nccf">
-                      <Form.Label>NCCF</Form.Label>
+                      <Form.Label>NCCF Per Guest</Form.Label>
                       <Form.Control
                         type="text"
                         disabled={isAdmin}
@@ -932,7 +932,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                   </Col>
                   <Col md={4}>
                     <Form.Group controlId="tax">
-                      <Form.Label>Tax</Form.Label>
+                      <Form.Label>Taxes Per Guest</Form.Label>
                       <Form.Control
                         type="text"
                         disabled={isAdmin}
@@ -953,7 +953,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                   </Col>
                   <Col md={4}>
                     <Form.Group controlId="grats">
-                      <Form.Label>Grats</Form.Label>
+                      <Form.Label>Gratuity Per Guest</Form.Label>
                       <Form.Control
                         type="text"
                         disabled={isAdmin}

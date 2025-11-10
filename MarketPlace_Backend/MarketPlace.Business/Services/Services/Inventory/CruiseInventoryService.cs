@@ -15,17 +15,20 @@ namespace MarketPlace.Business.Services.Services.Inventory
         private readonly ICruiseInventoryRepository _cruiseInventoryRepository;
         private readonly ICruisePricingRepository _cruisePricingRepository;
         public readonly ICruiseCabinRepository _cruiseCabinRepository;
+        public readonly ICruisePromotionPricingRepository _cruisePromotionPricingRepository;
         private readonly IMapper _mapper;
         private readonly ICruiseDeckImageRepository _cruiseDeckImageRepository;
 
 
 
         public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, ICruiseDeckImageRepository cruiseDeckImageRepository, IMapper mapper)
+        public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, IMapper mapper, ICruisePromotionPricingRepository cruisePromotionPricingRepository)
         {
             _cruiseInventoryRepository = cruiseInventoryRepository ?? throw new ArgumentNullException(nameof(cruiseInventoryRepository));
             _cruisePricingRepository = cruisePricingRepository;
             _cruiseCabinRepository = cruiseCabinRepository;
             _cruiseDeckImageRepository = cruiseDeckImageRepository;
+            _cruisePromotionPricingRepository = cruisePromotionPricingRepository;
             _mapper = mapper;
         }
         public async Task<CruiseInventoryModel> Insert(CruiseInventoryRequest model) 
@@ -124,6 +127,8 @@ namespace MarketPlace.Business.Services.Services.Inventory
                 {
                     _mapper.Map(pricing, response);
                 }
+
+                response.AppliedPromotionCount = await _cruisePromotionPricingRepository.GetCountByCruiseInventoryAsync(inventory.Id);
 
                 if (cabinDict.TryGetValue(inventory.Id, out var cabins))
                 {
