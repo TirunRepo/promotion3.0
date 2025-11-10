@@ -14,5 +14,6 @@ namespace MarketPlace.Business.Services.Interface.Inventory
         public Task<CruisePromotionPricing> InsertAsync(CruisePromotionPricing cruisePromotionPricing);
         public Task<CruisePromotionPricing> UpdateAsync(CruisePromotionPricing cruisePromotionPricing);
         public Task DeleteAsync(int cruisePromotionPricingId);
+        public Task<int> GetCountByCruiseInventoryAsync(int cruiseInventoryId);
     }
 }

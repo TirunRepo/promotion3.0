@@ -35,10 +35,10 @@ export interface IPromotionRequest {
   sailDate?: any;
   destinationId?: any;
   cruiseLineId?: any
-  groupId?: any
-  calculatedOn: string
-  discountType?: string
-  isBOGO: boolean
+  groupId?: any;
+  calculatedOn: string;
+  discountType?: string;
+  isBOGO: boolean;
 }
 
 export interface IPromotionResponse extends IPromotionRequest {
