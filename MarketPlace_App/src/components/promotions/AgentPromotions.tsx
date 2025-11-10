@@ -117,14 +117,14 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Cruise Promotion Pricing</Modal.Title>
+          <Modal.Title>Applied Promotions</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="px-4 py-3">
           <Row className="mb-3" style={{ gap: "10px" }}>
             <Col xs="auto">
               <Button variant="primary" onClick={handleAddClick}>
-                Add Promotion
+                Apply New Promotion
               </Button>
             </Col>
           </Row>
@@ -143,8 +143,8 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                     <tr>
                       <th>Promotion</th>
                       <th>Applied On</th>
-                      <th>Base Price</th>
                       <th>Total Price</th>
+                      <th>Discounted Price</th>
                       <th style={{ minWidth: "140px" }}>Actions</th>
                     </tr>
                   </thead>
@@ -164,7 +164,7 @@ const AgentPromotions: React.FC<AgentPromotionProps> = ({
                               )?.calculatedOn
                             }
                           </td>
-                          <td>{item.basePrice}</td>
+                          <td>{cruisePricing.totalPrice}</td>
                           <td>{item.totalPrice}</td>
                           <td className="d-flex justify-content-center gap-2">
                             <Button

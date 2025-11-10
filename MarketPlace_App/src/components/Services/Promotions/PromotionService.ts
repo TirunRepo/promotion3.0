@@ -32,16 +32,17 @@ export interface IPromotionRequest {
   endDate: string;
   isStackable: boolean;
   isActive: boolean;
-  sailDate?:any;
-  destinationId?:any;
-  cruiseLineId?:any
-  groupId?:any
-  calculatedOn : string
-  discountType?: string
+  sailDate?: any;
+  destinationId?: any;
+  cruiseLineId?: any
+  groupId?: any;
+  calculatedOn: string;
+  discountType?: string;
+  isBOGO: boolean;
 }
 
 export interface IPromotionResponse extends IPromotionRequest {
-  id: number |null;
+  id: number | null;
 }
 
 class PromotionService {
@@ -85,12 +86,12 @@ class PromotionService {
     ApiUtility.get<IIdNameModel<number>[]>(
       `${this.route}/CruiseLineBySailDate?sailDate=${sailDate}`
     );
-    getGroupIdBySailDate = (sailDate: string) =>
+  getGroupIdBySailDate = (sailDate: string) =>
     ApiUtility.get<IIdNameModel<number>[]>(
       `${this.route}/GroupIdBySailDate?sailDate=${sailDate}`
     );
 
-    getPromotionType =() =>ApiUtility.get<IIdNameModel<number>[]>(`${this.route}/PromotionType`)
+  getPromotionType = () => ApiUtility.get<IIdNameModel<number>[]>(`${this.route}/PromotionType`)
 }
 
 export default new PromotionService();

@@ -51,7 +51,8 @@ namespace MarketPlace.DataAccess.Repositories.Promotions.Repository
                     CruiseLineId = x.CruiseLineId,
                     CruiseShipId = x.CruiseShipId,
                     CalculatedOn = x.CalculatedOn,
-                    DiscountType = x.DiscountType
+                    DiscountType = x.DiscountType,
+                    IsBOGO = x.IsBOGO
                 })
                 .ToListAsync();
         }

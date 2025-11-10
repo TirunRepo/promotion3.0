@@ -90,5 +90,12 @@ namespace MarketPlace.DataAccess.Repositories.Inventory.Respository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<CruiseShip>> GetAll()
+        {
+            var cruiseShips = await _context.CruiseShips.ToListAsync();
+            return cruiseShips;
+        }
+
     }
 }

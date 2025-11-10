@@ -43,5 +43,10 @@ namespace MarketPlace.Business.Services.Services.Inventory
             await _repository.DeleteAsync(cruisePromotionPricingId);
         }
 
+        public async Task<int> GetCountByCruiseInventoryAsync(int cruiseInventoryId)
+        {
+            return await _repository.GetCountByCruiseInventoryAsync(cruiseInventoryId);
+        }
+
     }
 }
