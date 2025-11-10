@@ -10,6 +10,8 @@ namespace MarketPlace.Business.Repositories.Inventory.Interface
 {
     public interface ICruiseDeckImageRepository
     {
-        Task AddRangeAsync(List<CruiseDeckImage> deckImages);
+        Task AddAsync(CruiseDeckImage entity);
+        Task<CruiseInventory?> GetByIdAsync(int id);
+        Task SaveChangesAsync();
     }
 }

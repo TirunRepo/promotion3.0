@@ -651,13 +651,78 @@ namespace Marketplace.API.Controllers.Inventory
             return Ok(APIResponse<CruisePricing>.Ok(data));
         }
 
+        //[HttpPost("upload-images")]
+        //[Authorize]
+        //public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files)
+        //{
+        //    if (files == null || files.Count == 0)
+        //        return BadRequest(new { success = false, message = "No files selected" });
+
+        //    string? agentFolder = User?.FindFirst("fullName")?.Value
+        //                        ?? User?.FindFirst("companyName")?.Value
+        //                        ?? User?.FindFirst(ClaimTypes.Name)?.Value
+        //                        ?? User?.FindFirst(ClaimTypes.Email)?.Value;
+
+        //    if (string.IsNullOrWhiteSpace(agentFolder))
+        //    {
+        //        var userIdClaim = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        //        if (!string.IsNullOrWhiteSpace(userIdClaim) && int.TryParse(userIdClaim, out var userId))
+        //        {
+        //            var user = await _userRepository.GetByIdAsync(userId);
+        //            if (user != null)
+        //                agentFolder = user.CompanyName ?? user.FullName ?? user.Email;
+        //        }
+        //    }
+
+        //    agentFolder ??= "unknown";
+
+        //    agentFolder = Regex.Replace(agentFolder, @"[^\w\-]", "_");
+
+        //    var uploadPath = Path.Combine("C:\\promotion3.0", "images", "decks", agentFolder);
+        //    if (!Directory.Exists(uploadPath))
+        //        Directory.CreateDirectory(uploadPath);
+
+        //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        //    var uploadedImages = new List<object>();
+
+        //    foreach (var file in files)
+        //    {
+        //        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        //        if (!allowedExtensions.Contains(extension) || file.Length > 5 * 1024 * 1024)
+        //            continue;
+
+        //        var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{Guid.NewGuid():N}{extension}";
+        //        var filePath = Path.Combine(uploadPath, fileName);
+
+        //        using (var stream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            await file.CopyToAsync(stream);
+        //        }
+
+        //        var imageUrl = $"{Request.Scheme}://{Request.Host}/images/decks/{agentFolder}/{fileName}";
+        //        uploadedImages.Add(new { fileName, imageUrl });
+        //    }
+
+        //    if (uploadedImages.Count == 0)
+        //        return BadRequest(new { success = false, message = "No valid image files uploaded" });
+
+        //    return Ok(new
+        //    {
+        //        success = true,
+        //        message = "Images uploaded successfully",
+        //        images = uploadedImages
+        //    });
+        //}
+
         [HttpPost("upload-images")]
         [Authorize]
-        public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files)
+        public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files, [FromForm] int cruiseInventoryId)
         {
             if (files == null || files.Count == 0)
                 return BadRequest(new { success = false, message = "No files selected" });
 
+            // 1️⃣ Get agent folder name
             string? agentFolder = User?.FindFirst("fullName")?.Value
                                 ?? User?.FindFirst("companyName")?.Value
                                 ?? User?.FindFirst(ClaimTypes.Name)?.Value
@@ -675,9 +740,9 @@ namespace Marketplace.API.Controllers.Inventory
             }
 
             agentFolder ??= "unknown";
-
             agentFolder = Regex.Replace(agentFolder, @"[^\w\-]", "_");
 
+            // 2️⃣ Create folder path
             var uploadPath = Path.Combine("C:\\promotion3.0", "images", "decks", agentFolder);
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
@@ -685,10 +750,19 @@ namespace Marketplace.API.Controllers.Inventory
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
             var uploadedImages = new List<object>();
 
+            // 3️⃣ Get logged-in user id
+            var userIdClaimValue = User?.FindFirst("userId")?.Value
+                                ?? User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            int.TryParse(userIdClaimValue, out var createdBy);
+
+            // 4️⃣ Get deck number from CruiseInventory table
+            var inventory = await _cruiseDeckDetailsRepository.GetByIdAsync(cruiseInventoryId);
+            var deckValue = inventory?.Deck?.ToString() ?? "0";
+
+            // 5️⃣ Save images
             foreach (var file in files)
             {
                 var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-
                 if (!allowedExtensions.Contains(extension) || file.Length > 5 * 1024 * 1024)
                     continue;
 
@@ -700,9 +774,23 @@ namespace Marketplace.API.Controllers.Inventory
                     await file.CopyToAsync(stream);
                 }
 
-                var imageUrl = $"{Request.Scheme}://{Request.Host}/images/decks/{agentFolder}/{fileName}";
+                var imageUrl = $"/images/decks/{agentFolder}/{fileName}";
+
+                // ✅ Save record in DB
+                var deckImage = new CruiseDeckImage
+                {
+                    CruiseInventoryId = cruiseInventoryId,
+                    Deck = deckValue,
+                    DeckImage = imageUrl,
+                    CreatedBy = createdBy,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                await _cruiseDeckDetailsRepository.AddAsync(deckImage);
                 uploadedImages.Add(new { fileName, imageUrl });
             }
+
+            await _cruiseDeckDetailsRepository.SaveChangesAsync();
 
             if (uploadedImages.Count == 0)
                 return BadRequest(new { success = false, message = "No valid image files uploaded" });
@@ -710,7 +798,7 @@ namespace Marketplace.API.Controllers.Inventory
             return Ok(new
             {
                 success = true,
-                message = "Images uploaded successfully",
+                message = "Images uploaded successfully and saved in database",
                 images = uploadedImages
             });
         }
