@@ -5,6 +5,7 @@ using MarketPlace.Common.CommonModel;
 using MarketPlace.Common.DTOs.RequestModels.Inventory;
 using MarketPlace.Common.DTOs.ResponseModels.Inventory;
 using MarketPlace.Common.PagedData;
+using MarketPlace.DataAccess.Entities.Inventory;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -185,5 +186,19 @@ namespace Marketplace.API.Controllers.CruiseShips
         {
             return await _cruiseLineService.Get();
         }
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllShips()
+        {
+
+            var pagedShips = await _cruiseShipService.GetAll();
+
+            return Ok(new APIResponse<List<CruiseShip>>
+            {
+                Success = true,
+                Data = pagedShips,
+                Message = "Cruise ships retrieved successfully."
+            });
+        }
+
     }
 }

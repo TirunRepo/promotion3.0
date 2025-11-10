@@ -17,5 +17,6 @@ namespace MarketPlace.Business.Repositories.Inventory.Interface
         Task<bool> Delete(int id);
         Task<PagedData<CruiseShipReponse>> GetList(int page, int pageSize);
         Task<CruiseShipReponse> GetById(int id);
+        public Task<List<CruiseShip>> GetAll();
     }
 }

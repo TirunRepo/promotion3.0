@@ -42,5 +42,8 @@ namespace MarketPlace.Common.DTOs.RequestModels.Promotions
         public string? CruiseLineId { get; set; }
         public bool? IsStackable { get; set; }
         public bool IsActive { get; set; }
+        public string CalculatedOn { get; set; } = String.Empty;
+        public string? DiscountType { get; set; }
+        public bool IsBOGO { get; set; }
     }
 }

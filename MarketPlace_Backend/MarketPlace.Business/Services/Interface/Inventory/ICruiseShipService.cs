@@ -17,5 +17,6 @@ namespace MarketPlace.Business.Services.Interface.Inventory
         Task<CruiseShipRequest> Insert(CruiseShipRequest cruiseShipDto);
         Task<CruiseShipRequest> Update(int Id,CruiseShipRequest cruiseShipDto);
         Task<bool> Delete(int id);
+        Task<List<CruiseShip>> GetAll();
     }
 }

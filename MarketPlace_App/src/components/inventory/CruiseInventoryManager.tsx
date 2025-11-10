@@ -16,8 +16,12 @@ import type { IIdNameModel } from "../../common/IIdNameModel";
 import DeleteCabin from "./DeleteCabin";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import { IoIosAdd } from "react-icons/io";
 import AgentPromotions from "../promotions/AgentPromotions";
+import type { IPromotionResponse } from "../Services/Promotions/PromotionService";
+import PromotionService from "../Services/Promotions/PromotionService";
+import CruiseShipsService, {
+  type ICruiseShip,
+} from "../Services/cruiseShips/CruiseShipsService";
 
 const CruiseInventoryManager: React.FC = () => {
   const [inventories, setInventories] = useState<ICruiseInventory[]>([]);
@@ -40,11 +44,14 @@ const CruiseInventoryManager: React.FC = () => {
 
   // New states for names
   const [destinations, setDestinations] = useState<IIdNameModel<number>[]>([]);
+
   const [departurePorts, setDeparturePorts] = useState<IIdNameModel<number>[]>(
     []
   );
-  const [cruiseLines, setCruiseLines] = useState<IIdNameModel<number>[]>([]);
 
+  const [cruiseLines, setCruiseLines] = useState<IIdNameModel<number>[]>([]);
+  const [promotions, setPromotions] = useState<IPromotionResponse[]>([]);
+  const [cruiseShips, setCruiseShips] = useState<ICruiseShip[]>([]);
   // Fetch inventories
   const fetchInventories = async (page = currentPage, size = pageSize) => {
     setLoading(true);
@@ -72,7 +79,17 @@ const CruiseInventoryManager: React.FC = () => {
     CruiseService.getCruiseLines()
       .then((res) => res.data.data && setCruiseLines(res.data.data))
       .catch(console.error);
+
+    PromotionService.getAllPromotions()
+      .then((res) => res.data.data && setPromotions(res.data.data))
+      .catch(console.error);
+
+    CruiseShipsService.getAllShips()
+      .then((res) => res.data.data && setCruiseShips(res.data.data))
+      .catch(console.error);
   }, []);
+
+  // console.log("promotions", promotions);
 
   // Fetch inventories on page change
   useEffect(() => {
@@ -113,6 +130,7 @@ const CruiseInventoryManager: React.FC = () => {
         currencyType: inventory.currencyType,
         pricingType: inventory.pricingType,
         cabinOccupancy: inventory.cabinOccupancy,
+        totalPrice: inventory.totalPrice,
       };
 
       if (pricingPayload.pricingType) {
@@ -249,6 +267,8 @@ const CruiseInventoryManager: React.FC = () => {
     departurePorts.find((p) => p.id === Number(id))?.name || "-";
   const getCruiseLineName = (id: number | string) =>
     cruiseLines.find((c) => c.id === Number(id))?.name || "-";
+  const getCruiseShipName = (id: number) =>
+    cruiseShips.find((c) => c.id === Number(id))?.name || "-";
 
   // Fetch departure ports for all destinations
   useEffect(() => {
@@ -311,17 +331,19 @@ const CruiseInventoryManager: React.FC = () => {
             >
               <thead className="table-light">
                 <tr>
-                  <th>ID</th>
-                  <th>Departure Port</th>
                   <th>Destination</th>
+                  <th>Departure Port</th>
+
                   <th>Sail Date</th>
-                  <th>Ship Code</th>
+
                   <th>Cruise Line</th>
-                  <th>Commission Rate</th>
+                  <th>Ship Name</th>
+                  {/* <th>Commission Rate</th> */}
                   <th>Single Price</th>
                   <th>Double Price</th>
                   <th>Triple Price</th>
                   <th>Total Price</th>
+                  <th>Promotions Applied</th>
                   <th style={{ minWidth: "140px" }}>Actions</th>
                 </tr>
               </thead>
@@ -329,19 +351,19 @@ const CruiseInventoryManager: React.FC = () => {
                 {inventories.length ? (
                   inventories.map((inv) => (
                     <tr key={inv.id ?? JSON.stringify(inv)}>
-                      <td>{inv.id ?? "-"}</td>
-                      <td>{getDeparturePortName(inv.departurePortId)}</td>
                       <td>{getDestinationName(inv.destinationId)}</td>
+                      <td>{getDeparturePortName(inv.departurePortId)}</td>
                       <td>
                         {inv.sailDate
                           ? dayjs(inv.sailDate).format("DD/MM/YYYY")
                           : "-"}
                       </td>
-                      <td>{inv.shipCode ?? "-"}</td>
+
                       <td>{getCruiseLineName(inv.cruiseLineId)}</td>
-                      <td>{`${inv.currencyType || "-"} ${
+                      <td>{getCruiseShipName(inv.cruiseShipId)}</td>
+                      {/* <td>{`${inv.currencyType || "-"} ${
                         inv.commisionRate ?? "-"
-                      }`}</td>
+                      }`}</td> */}
                       <td>{`${inv.currencyType || "-"} ${
                         inv.singlePrice ?? "-"
                       }`}</td>
@@ -354,6 +376,7 @@ const CruiseInventoryManager: React.FC = () => {
                       <td>{`${inv.currencyType || "-"} ${
                         inv.totalPrice ?? "-"
                       }`}</td>
+                      <td>{`${inv.appliedPromotionCount || "0"}`}</td>
                       <td className="d-flex justify-content-center gap-2">
                         {user?.role === "Agent" && (
                           <>
@@ -361,7 +384,7 @@ const CruiseInventoryManager: React.FC = () => {
                               placement="top"
                               overlay={
                                 <Tooltip id="tooltip-enable-agent">
-                                  {"Promotion"}
+                                  {"Promotions Applied"}
                                 </Tooltip>
                               }
                             >
@@ -369,12 +392,11 @@ const CruiseInventoryManager: React.FC = () => {
                                 size="sm"
                                 variant="outline-primary"
                                 onClick={() => {
-                                  console.log("Clicked Add Promotion");
                                   setAgentModalVisible(true);
                                   setSelectedInventory(inv);
                                 }}
                               >
-                                <IoIosAdd size={18} />
+                                Promotion
                               </Button>
                             </OverlayTrigger>
                           </>
@@ -512,6 +534,7 @@ const CruiseInventoryManager: React.FC = () => {
           show={agentModelVisible}
           onHide={() => setAgentModalVisible(false)}
           inventory={selectedInventory}
+          allPromotions={promotions}
         />
       )}
 

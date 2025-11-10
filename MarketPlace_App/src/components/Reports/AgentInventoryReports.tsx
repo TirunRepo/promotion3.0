@@ -59,7 +59,7 @@ const AgentInventoryReportPage: React.FC = () => {
 
       const responseData = res?.data;
 
-      if (responseData?.success) {
+      if (responseData && responseData.data) {
         setReportData(responseData.data?.items || []);
         setTotalPages(responseData.data?.totalPages || 1);
       } else {
@@ -131,6 +131,8 @@ const AgentInventoryReportPage: React.FC = () => {
               <th>Hold</th>
               <th>Available</th>
               <th>Base Price</th>
+               <th>Markup Mode</th>
+                <th>Markup Value</th>
             </tr>
           </thead>
           <tbody>
@@ -144,7 +146,13 @@ const AgentInventoryReportPage: React.FC = () => {
                   <td>{item.totalCabins}</td>
                   <td>{item.holdCabins}</td>
                   <td>{item.availableCabins}</td>
-                  <td>{item.basePrice}</td>
+                  <td>{item.baseFare}</td>
+                  <td>{item.markupMode}</td>
+                   <td>
+                        {item.markupMode === "Percentage"
+                          ? `${item.markUpPercentage}%`
+                          : item.markUpFlatAmount}
+                      </td>
                   {/* <td>{item.markupPrice}</td> */}
                 </tr>
               ))

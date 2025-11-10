@@ -191,7 +191,7 @@ const ManageMarkup: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="text-center text-muted">
+                    <td colSpan={10} className="text-center text-muted">
                       No markups found
                     </td>
                   </tr>

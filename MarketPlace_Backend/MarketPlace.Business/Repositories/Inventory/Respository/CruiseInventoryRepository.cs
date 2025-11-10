@@ -75,12 +75,19 @@ namespace MarketPlace.DataAccess.Repositories.Inventory.Respository
         public async Task<PagedData<CruiseInventory>> GetPagedAsync(int page, int pageSize, string role, int? userId)
         {
             var query = _context.CruiseInventories.AsQueryable();
-            if (role != null && role.Equals("admin", StringComparison.OrdinalIgnoreCase))
-               query = query.Where(x => x.EnableAdmin);
-            if(userId != null)
+
+            // Admin role: show all inventories where EnableAdmin = true
+            if (!string.IsNullOrEmpty(role) && role.Equals("admin", StringComparison.OrdinalIgnoreCase))
             {
-            query = query.Where(it => it.CreatedBy == userId);
+                query = query.Where(x => x.EnableAdmin);
             }
+            else
+            {
+                // Agent or other roles: show only their own inventories
+                if (userId != null)
+                    query = query.Where(it => it.CreatedBy == userId);
+            }
+
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
@@ -99,6 +106,7 @@ namespace MarketPlace.DataAccess.Repositories.Inventory.Respository
                 TotalPages = totalPages
             };
         }
+
 
         //  UpdateRoles from interface
         public async Task<CruiseInventoryModel> UpdateRoles(InventoryRoleUpdateRequest roleInventoryUpdateRequest)

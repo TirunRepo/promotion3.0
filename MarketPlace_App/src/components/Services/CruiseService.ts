@@ -14,8 +14,8 @@ export interface ICabinDetails {
 
 export interface IManualCabinDetails {
   id?: number;
-  name:string;
-  value:string;
+  name: string;
+  value: string;
 }
 
 export interface ICruiseInventory {
@@ -49,11 +49,13 @@ export interface ICruiseInventory {
   commisionDoubleRate?: number | null;
   commisionTripleRate?: number | null;
   totalPrice?: number | null;
+  deckImagesBase64?: string[];
+  appliedPromotionCount?: number;
 }
 
 // Pricing model
 export interface ICruisePricing {
-  id?:number
+  id?: number
   cruiseInventoryId?: number;
   pricingType: string;
   commisionRate: number | null;
@@ -65,6 +67,7 @@ export interface ICruisePricing {
   nccf: number | null;
   currencyType: string;
   cabinOccupancy: string;
+  totalPrice: number | null | undefined
 }
 
 // Cabin model
@@ -77,9 +80,9 @@ export interface ICruiseCabin {
 }
 
 export interface ICruiseInverntoryStatus {
-  id: number; 
+  id: number;
   userRole: string;
-  enableAdmin: boolean; 
+  enableAdmin: boolean;
   enableAgent: boolean;
 }
 
@@ -103,12 +106,15 @@ export interface IAgentInventoryReport {
   totalCabins: number;
   holdCabins: number;
   availableCabins: number;
-  basePrice: number;
-  markupPrice: number;
+  baseFare: number;
+  markupMode: string;
+  markUpPercentage: number;
+  markUpFlatAmount: number;
   createdBy: number;
   updatedBy: number;
   createdOn: string;
   updatedOn: string;
+
 }
 
 // ----------------------------
@@ -126,12 +132,12 @@ class CruiseService {
 
   // Update Inventory Status
   updateInventory = (data: ICruiseInverntoryStatus) =>
-  ApiUtility.post<IApiResponse<ICruiseInventory>>(`${this.route}/UpdateRoles`,data);
+    ApiUtility.post<IApiResponse<ICruiseInventory>>(`${this.route}/UpdateRoles`, data);
 
-  getManualInventory = (id: number) => 
-  ApiUtility.get<IApiResponse<IManualCabinDetails[]>>(`${this.route}/GetManualCabin/${id}`);
+  getManualInventory = (id: number) =>
+    ApiUtility.get<IApiResponse<IManualCabinDetails[]>>(`${this.route}/GetManualCabin/${id}`);
 
-   
+
   // Pricing
   saveCruisePricing = (data: ICruisePricing) =>
     ApiUtility.post<ICruisePricing>(`${this.route}/CruisePricing`, data);
@@ -172,14 +178,21 @@ class CruiseService {
       `${this.route}/shipByCruiseLine/${id}`
     );
 
-  deleteInventory =(id:number) => ApiUtility.delete(`/CruiseInventories/${id}`);
-    deleteCabin =(data: ICabinDetails, id:number) => ApiUtility.post<IApiResponse<void>>(`${this.route}/cabin/${id}`, data);
+  deleteInventory = (id: number) => ApiUtility.delete(`/CruiseInventories/${id}`);
+  deleteCabin = (data: ICabinDetails, id: number) => ApiUtility.post<IApiResponse<void>>(`${this.route}/cabin/${id}`, data);
 
   // Agent Inventory  
-   getAgentInventoryReport = (agentId: number, page: number, pageSize: number) =>
+  getAgentInventoryReport = (agentId: number, page: number, pageSize: number) =>
     ApiUtility.get<IApiResponse<IPagedData<IAgentInventoryReport>>>(
       `${this.route}/GetAgentInventoryReport?agentId=${agentId}&page=${page}&pageSize=${pageSize}`
     );
+
+  getByCruiseInventoryId = (cruiseInventoryId: number) => {
+    return ApiUtility.get<IApiResponse<ICruisePricing>>(
+      `${this.route}/GetByCruiseInventoryId`,
+      { cruiseInventoryId }
+    );
+  };
 }
 
 export default new CruiseService();

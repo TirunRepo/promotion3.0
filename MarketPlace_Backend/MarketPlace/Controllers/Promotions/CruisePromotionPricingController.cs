@@ -51,7 +51,7 @@ namespace Marketplace.API.Controllers.Promotions
         [HttpPut("Update")]
         public async Task<ActionResult<APIResponse<CruisePromotionPricing>>> Update(CruisePromotionPricing CruisePromotionPricing)
         {
-            var data = await _cruisePromotionPricingService.InsertAsync(CruisePromotionPricing);
+            var data = await _cruisePromotionPricingService.UpdateAsync(CruisePromotionPricing);
 
             if (data == null)
                 return NotFound(APIResponse<CruisePromotionPricing>.Fail($"Cruise Promotion Pricing Not Updated."));
@@ -59,7 +59,7 @@ namespace Marketplace.API.Controllers.Promotions
             return Ok(APIResponse<CruisePromotionPricing>.Ok(data));
         }
 
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{Id}")]
         public async Task<ActionResult<APIResponse<CruisePromotionPricing>>> Delete(int Id)
         {
             await _cruisePromotionPricingService.DeleteAsync(Id);
