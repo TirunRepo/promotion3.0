@@ -21,8 +21,7 @@ namespace MarketPlace.Business.Services.Services.Inventory
 
 
 
-        public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, ICruiseDeckImageRepository cruiseDeckImageRepository, IMapper mapper)
-        public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, IMapper mapper, ICruisePromotionPricingRepository cruisePromotionPricingRepository)
+        public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, ICruiseDeckImageRepository cruiseDeckImageRepository, IMapper mapper, ICruisePromotionPricingRepository cruisePromotionPricingRepository)
         {
             _cruiseInventoryRepository = cruiseInventoryRepository ?? throw new ArgumentNullException(nameof(cruiseInventoryRepository));
             _cruisePricingRepository = cruisePricingRepository;
