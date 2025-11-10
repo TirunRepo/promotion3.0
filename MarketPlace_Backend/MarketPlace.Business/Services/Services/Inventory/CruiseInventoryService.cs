@@ -17,18 +17,20 @@ namespace MarketPlace.Business.Services.Services.Inventory
         public readonly ICruiseCabinRepository _cruiseCabinRepository;
         public readonly ICruisePromotionPricingRepository _cruisePromotionPricingRepository;
         private readonly IMapper _mapper;
+        private readonly ICruiseDeckImageRepository _cruiseDeckImageRepository;
 
 
+
+        public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, ICruiseDeckImageRepository cruiseDeckImageRepository, IMapper mapper)
         public CruiseInventoryService(ICruiseInventoryRepository cruiseInventoryRepository,ICruisePricingRepository cruisePricingRepository, ICruiseCabinRepository cruiseCabinRepository, IMapper mapper, ICruisePromotionPricingRepository cruisePromotionPricingRepository)
         {
             _cruiseInventoryRepository = cruiseInventoryRepository ?? throw new ArgumentNullException(nameof(cruiseInventoryRepository));
             _cruisePricingRepository = cruisePricingRepository;
             _cruiseCabinRepository = cruiseCabinRepository;
+            _cruiseDeckImageRepository = cruiseDeckImageRepository;
             _cruisePromotionPricingRepository = cruisePromotionPricingRepository;
             _mapper = mapper;
         }
-
-
         public async Task<CruiseInventoryModel> Insert(CruiseInventoryRequest model) 
         {
             try

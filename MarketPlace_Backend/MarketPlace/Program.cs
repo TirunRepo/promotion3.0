@@ -65,6 +65,7 @@ builder.Services.AddScoped<IDestinationService, CruiseDestinationService>();
 builder.Services.AddScoped<ICruiseDestinationRepository, CruiseDestinationRepository>();
 builder.Services.AddScoped<ICruiseCabinService, CruiseCabinService>();
 builder.Services.AddScoped<ICruiseCabinRepository, CruiseCabinRepository>();
+builder.Services.AddScoped<ICruiseDeckImageRepository, CruiseDeckImageRepository>();
 
 builder.Services.AddScoped<IMarkupRepository, MarkupRepository>();
 builder.Services.AddScoped<IMarkupsService, MarkUpsService>();
