@@ -2,7 +2,8 @@
 <!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
 <Project>
   <PropertyGroup>
-    <History>False|2025-10-08T05:22:04.5996076Z||;False|2025-10-08T10:51:43.5931380+05:30||;</History>
+    <History>True|2025-11-11T05:14:09.4250522Z||;False|2025-11-11T10:43:04.1386822+05:30||;True|2025-11-10T18:23:40.6024468+05:30||;False|2025-11-10T18:22:46.1860987+05:30||;False|2025-11-10T18:22:08.7548145+05:30||;False|2025-11-10T18:21:58.2683362+05:30||;False|2025-10-08T10:52:04.5996076+05:30||;False|2025-10-08T10:51:43.5931380+05:30||;</History>
     <LastFailureDetails />
+    <_PublishTargetUrl>C:\Satyan\Build</_PublishTargetUrl>
   </PropertyGroup>
 </Project>

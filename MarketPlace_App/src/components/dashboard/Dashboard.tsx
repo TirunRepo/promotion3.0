@@ -1,10 +1,9 @@
 // src/components/Dashboard.tsx
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Table } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { FaShip, FaTags, FaUsers } from "react-icons/fa";
 import { GiConfirmed } from "react-icons/gi";
 
-import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,21 +33,6 @@ const Dashboard: React.FC = () => {
   // const inventoryCount = 120;
   // const promotionsCount = 8;
 
-  const upcomingCruises = [
-    { name: "Caribbean Explorer", date: "2025-10-05", status: "Scheduled" },
-    { name: "Mediterranean Delight", date: "2025-11-12", status: "Scheduled" },
-    { name: "Alaskan Adventure", date: "2025-12-01", status: "Pending" },
-    { name: "Baltic Voyage", date: "2026-01-15", status: "Scheduled" },
-  ];
-
-  const bookingsData = [30, 45, 60, 50, 70, 90]; // Monthly bookings
-
-  const recentPromotions = [
-    { title: "Summer Special", discount: "20%" },
-    { title: "Winter Cruise", discount: "15%" },
-    { title: "Family Package", discount: "25%" },
-    { title: "Early Bird Offer", discount: "10%" },
-  ];
 
   // const chartData = {
   //   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],

@@ -52,17 +52,6 @@ const PromotionManager: React.FC = () => {
     setModalVisible(true);
   };
 
-  // Edit
-  const handleEdit = (promotion: IPromotionResponse) => {
-    setSelectedPromotion(promotion);
-    setModalVisible(true);
-  };
-
-  // Delete
-  const handleDelete = (id: number) => {
-    setPromotionToDelete(id);
-    setDeleteModalVisible(true);
-  };
 
   const handleDeleteConfirm = async () => {
     if (!promotionToDelete) return;

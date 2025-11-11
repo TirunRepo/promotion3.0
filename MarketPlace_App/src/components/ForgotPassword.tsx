@@ -14,7 +14,7 @@ const ForgotPassword: React.FC = () => {
   ) => {
     try {
       setSubmitting(true);
-      const response = await AuthService.forgotPassword(values.email);
+      const response : any= await AuthService.forgotPassword(values.email);
 
       if (response.success) {
         showToast(response.message || "Password reset link sent!", "success");

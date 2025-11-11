@@ -58,7 +58,7 @@ const emptyInventory = (): ICruiseInventory => ({
   cabinDetails: [],
   enableAdmin: false,
   enableAgent: false,
-  deckImages: [],
+  deckImagesBase64: [],
 });
 
 const normalizeInventory = (inv: ICruiseInventory): ICruiseInventory => {
@@ -83,7 +83,7 @@ const normalizeInventory = (inv: ICruiseInventory): ICruiseInventory => {
     cruiseShipId: inv.cruiseShipId ?? 0,
     cabinDetails: inv.cabinDetails ?? [],
     enableAdmin: inv.enableAdmin,
-    deckImages: (inv as any).deckImages ?? [],
+    deckImagesBase64: (inv as any).deckImages ?? [],
   };
 };
 
@@ -191,11 +191,11 @@ const EditInventory: React.FC<EditInventoryProps> = ({
 
   useEffect(() => {
     if (inventory) {
-      const normalized = normalizeInventory(inventory);
+      const normalized : any = normalizeInventory(inventory);
       setForm(normalized);
       if (normalized.deckImages && normalized.deckImages.length > 0) {
         setUploadedImages(
-          normalized.deckImages.map((base64, i) => ({
+          normalized.deckImages.map((base64 : any, i : any) => ({
             name: `image_${i + 1}.jpg`,
             preview: base64,
           }))
