@@ -15,7 +15,7 @@ class ApiUtility {
   private redirecting = false;
   private client = (() => {
     const axiosInstance = axios.create({
-      baseURL: "https://localhost:5000",
+      baseURL: "http://10.2.63.176:8080",
       withCredentials: true,
     });
 
