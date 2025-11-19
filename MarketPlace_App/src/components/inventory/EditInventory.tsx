@@ -8,7 +8,6 @@ import type {
   IIdNameModel,
   IIdNameValueModel,
 } from "../../common/IIdNameModel";
-import { Eye } from "react-bootstrap-icons";
 import { MdDelete } from "react-icons/md";
 
 import ImageLightbox from "../../common/ImagePreview";
@@ -103,9 +102,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
   );
   const [cruiseLines, setCruiseLines] = useState<IIdNameModel<Number>[]>([]);
   const [ships, setShips] = useState<IIdNameValueModel<any>[]>([]);
-  const [uploadedImages, setUploadedImages] = useState<
-    { name: string; preview: string }[]
-  >([]);
+  const [uploadedImages, setUploadedImages] = useState<{ fileName: string; imageUrl: string }[]>([]);
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [selectedPreview, setSelectedPreview] = useState<string | null>(null);
 
@@ -117,20 +114,20 @@ const EditInventory: React.FC<EditInventoryProps> = ({
   //image upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const nonImageFiles = files.filter((file) => !file.type.startsWith("image/"));
-    nonImageFiles.forEach((file) => {
-    showToast(
-      `${file.name} is not allowed file type.`, "error"
+    const nonImageFiles = files.filter(
+      (file) => !file.type.startsWith("image/")
     );
-  });
-  
+    nonImageFiles.forEach((file) => {
+      showToast(`${file.name} is not allowed file type.`, "error");
+    });
+
     if (files.length === 0) return;
 
-   const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
     if (imageFiles.length === 0) {
-    e.target.value = "";
-    return;
-  }
+      e.target.value = "";
+      return;
+    }
     const newFiles = files.slice(0, MAX_IMAGES - uploadedImages.length);
     if (newFiles.length < files.length) {
       showToast(
@@ -139,12 +136,12 @@ const EditInventory: React.FC<EditInventoryProps> = ({
     }
 
     const readPromises = newFiles.map((file) => {
-      return new Promise<{ name: string; preview: string }>((resolve) => {
+      return new Promise<{ fileName: string; imageUrl: string }>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           resolve({
-            name: file.name,
-            preview: reader.result as string,
+            fileName: file.name,
+            imageUrl: reader.result as string,
           });
         };
         reader.readAsDataURL(file);
@@ -157,7 +154,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
 
       setForm((prev) => ({
         ...prev,
-        deckImages: updatedImages.map((img) => img.preview),
+        deckImages: updatedImages,
       }));
 
       e.target.value = "";
@@ -183,23 +180,18 @@ const EditInventory: React.FC<EditInventoryProps> = ({
 
     setForm((prev) => ({
       ...prev,
-      deckImages: updatedImages.map((img) => img.preview),
+      deckImages: updatedImages, // keep full objects
     }));
   };
 
-  console.log("preview", uploadedImages);
+  // console.log("preview", uploadedImages);
 
   useEffect(() => {
     if (inventory) {
       const normalized = normalizeInventory(inventory);
       setForm(normalized);
       if (normalized.deckImages && normalized.deckImages.length > 0) {
-        setUploadedImages(
-          normalized.deckImages.map((base64, i) => ({
-            name: `image_${i + 1}.jpg`,
-            preview: base64,
-          }))
-        );
+        setUploadedImages(normalized.deckImages);
       }
     } else {
       setForm(emptyInventory());
@@ -638,7 +630,7 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                                     verticalAlign: "middle",
                                   }}
                                 >
-                                  {img.name}
+                                  {img.fileName}
                                 </td>
                                 <td
                                   style={{
@@ -648,8 +640,8 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                                   }}
                                 >
                                   <img
-                                    src={img.preview}
-                                    alt={img.name}
+                                    src={img.imageUrl}
+                                    alt={img.fileName}
                                     style={{
                                       width: "50px",
                                       height: "50px",
@@ -667,13 +659,13 @@ const EditInventory: React.FC<EditInventoryProps> = ({
                                 >
                                   <Button
                                     size="sm"
-                                    variant="link"
-                                    className="p-0 me-1"
+                                    variant="outline-primary"
+                                    className="p-1 me-1"
                                     onClick={() =>
-                                      handlePreviewClick(img.preview)
+                                      handlePreviewClick(img.imageUrl)
                                     }
                                   >
-                                    <Eye size={16} />
+                                  <span className="primary">View</span>
                                   </Button>
                                   {!isAdmin && (
                                     <MdDelete

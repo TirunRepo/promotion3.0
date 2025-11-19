@@ -15,9 +15,8 @@ const Registration: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [loading, setLoading] = useState(false);
-  const [role, setRole] = useState(null);
   const { showToast } = useToast();
-
+  const role = null;
   const fetchRegisterUser = async () => {
     setLoading(true);
     try {

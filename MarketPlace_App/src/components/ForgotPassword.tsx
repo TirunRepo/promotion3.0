@@ -16,11 +16,11 @@ const ForgotPassword: React.FC = () => {
       setSubmitting(true);
       const response = await AuthService.forgotPassword(values.email);
 
-      if (response.success) {
-        showToast(response.message || "Password reset link sent!", "success");
+      if (response) {
+        showToast(response.message , "success");
         resetForm();
       } else {
-        showToast(response.message || "Email not found.", "error");
+        showToast(response, "error");
       }
     } catch (error) {
       console.error("Forgot password error:", error);

@@ -96,13 +96,13 @@ const CruiseInventoryManager: React.FC = () => {
     fetchInventories(currentPage, pageSize);
   }, [currentPage, pageSize]);
 
-  // ✅ Handle save (Inventory -> Pricing -> Cabins sequentially)
+  // Handle save (Inventory -> Pricing -> Cabins sequentially)
   const handleSave = async (inventory: ICruiseInventory) => {
+    debugger;
     setLoading(true);
     try {
       let savedInventory: ICruiseInventory | null = null;
-
-      // 1️⃣ Inventory
+      // Inventory
       if (inventory.id) {
         const invRes = await CruiseService.updateCruiseInventory(
           inventory.id,
@@ -117,7 +117,7 @@ const CruiseInventoryManager: React.FC = () => {
       if (!savedInventory?.id)
         throw new Error("Failed to save Cruise Inventory");
 
-      // 2️⃣ Pricing
+      //  Pricing
       const pricingPayload: ICruisePricing = {
         cruiseInventoryId: savedInventory.id,
         commisionRate: inventory.commisionRate,
@@ -144,7 +144,7 @@ const CruiseInventoryManager: React.FC = () => {
         }
       }
 
-      // 3️⃣ Cabins
+      //  Cabins
       if (inventory.cabinDetails?.length) {
         const cabinsPayload = inventory.cabinDetails.map(
           (c: ICabinDetails) => ({
@@ -162,8 +162,29 @@ const CruiseInventoryManager: React.FC = () => {
           await CruiseService.saveCruiseCabins(cabinsPayload);
         }
       }
+       // Upload Deck Images (if any)
+        if (inventory.deckImages?.length) {
+          // Only upload images that have a File object (not already uploaded)
+          const filesToUpload = inventory.deckImages
+            .filter((img: any) => img.file)
+            .map((img: any) => img.file);
 
-      // ✅ Success
+          if (filesToUpload.length > 0) {
+            const uploadRes = await CruiseService.uploadDeckImages(
+              savedInventory.id,
+              filesToUpload
+            );
+
+            if (uploadRes && uploadRes.data) {
+              console.log("Deck images uploaded:", uploadRes.data);
+              showToast("Deck images uploaded successfully", "success");
+            } else {
+              showToast("Failed to upload deck images", "error");
+            }
+          }
+        }
+
+      // Success
       if (inventory.id) {
         showToast(
           "Cruise inventory, pricing & cabins saved successfully",
@@ -176,7 +197,7 @@ const CruiseInventoryManager: React.FC = () => {
         );
       }
       fetchInventories(currentPage, pageSize);
-      setModalShow(false);
+      setModalShow(false);  
     } catch (err) {
       console.error("Error saving inventory:", err);
       showToast("Error saving inventory", "error");
@@ -194,6 +215,7 @@ const CruiseInventoryManager: React.FC = () => {
       // Refetch only the current inventory
       const res = await CruiseService.getInventory(currentPage, pageSize);
       // console.log(res.data, "responceDatass");
+      
       setSelectedInventory(res.data.items?.find((i) => i.id === id) || null);
       // setModalShow(false);
       // fetchInventories(currentPage, pageSize);
@@ -258,6 +280,7 @@ const CruiseInventoryManager: React.FC = () => {
     commisionDoubleRate: null,
     commisionTripleRate: null,
     totalPrice: null,
+    deckImages:[]
   });
 
   // Helper to get names by ID

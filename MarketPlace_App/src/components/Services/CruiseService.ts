@@ -49,7 +49,7 @@ export interface ICruiseInventory {
   commisionDoubleRate?: number | null;
   commisionTripleRate?: number | null;
   totalPrice?: number | null;
-  deckImagesBase64?: string[];
+  deckImages?: IUploadedImage[];
   appliedPromotionCount?: number;
 }
 
@@ -117,6 +117,15 @@ export interface IAgentInventoryReport {
 
 }
 
+export interface IUploadedImage {
+  fileName: string;
+  imageUrl: string;
+}
+
+export interface IUploadImageResponse {
+  images: IUploadedImage[];
+}
+
 // ----------------------------
 // Service
 // ----------------------------
@@ -136,7 +145,6 @@ class CruiseService {
 
   getManualInventory = (id: number) =>
     ApiUtility.get<IApiResponse<IManualCabinDetails[]>>(`${this.route}/GetManualCabin/${id}`);
-
 
   // Pricing
   saveCruisePricing = (data: ICruisePricing) =>
@@ -193,7 +201,21 @@ class CruiseService {
       { cruiseInventoryId }
     );
   };
+
+
+uploadDeckImages = (cruiseInventoryId: number, files: File[]) => {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
+  formData.append("cruiseInventoryId", cruiseInventoryId.toString());
+  return ApiUtility.postForm<IUploadImageResponse>(
+    `${this.route}/upload-images`,
+    formData
+  );
+};
+
+
 }
+
 
 export default new CruiseService();
 

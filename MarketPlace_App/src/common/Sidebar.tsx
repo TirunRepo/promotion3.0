@@ -6,10 +6,19 @@ import { List, ChevronDown, ChevronRight } from "react-bootstrap-icons";
 import { menuItems, type MenuItem } from "../menuConfig";
 import { useAuth } from "../context/AuthContext";
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
+  isOffcanvas?: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ 
+  collapsed = false, 
+  onToggleCollapsed, 
+  isOffcanvas = false 
+}) => {
   const { user } = useAuth();
-  const currentRole:any = user?.role;
-  const [collapsed, setCollapsed] = useState(false);
+  const currentRole: any = user?.role;
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const location = useLocation();
 
@@ -46,6 +55,7 @@ const Sidebar: React.FC = () => {
     const hasChildren = item.children && item.children.length > 0;
     const isOpen = openMenus[item.to] || false;
     const isActive = location.pathname.startsWith(item.to);
+    const effectiveCollapsed = collapsed && !isOffcanvas;
 
     if (hasChildren) {
       return (
@@ -56,14 +66,14 @@ const Sidebar: React.FC = () => {
             onClick={() => toggleSubmenu(item.to)}
           >
             {item.icon}
-            <span className={`sidebar-label ${collapsed ? "collapsed" : ""}`}>{item.label}</span>
-            {!collapsed && <span className="ms-auto">{isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>}
+            <span className={`sidebar-label ${effectiveCollapsed ? "collapsed" : ""}`}>{item.label}</span>
+            {!effectiveCollapsed && <span className="ms-auto">{isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>}
           </div>
 
           <div
             className="submenu-wrapper"
             style={{
-              maxHeight: isOpen && !collapsed ? "500px" : "0",
+              maxHeight: isOpen && !effectiveCollapsed ? "500px" : "0",
               overflow: "hidden",
               transition: "max-height 0.3s ease",
             }}
@@ -80,51 +90,54 @@ const Sidebar: React.FC = () => {
       <NavLink
         key={item.to}
         to={item.to}
-        className={({ isActive }) => `nav-link d-flex align-items-center sidebar-link ${isActive ? "active" : ""}`}
+        className={({ isActive: linkActive }) => `nav-link d-flex align-items-center sidebar-link ${linkActive ? "active" : ""}`}
         style={{ paddingLeft: `${level * 16 + 12}px` }}
       >
         {item.icon}
-        <span className={`sidebar-label ${collapsed ? "collapsed" : ""}`}>{item.label}</span>
+        <span className={`sidebar-label ${effectiveCollapsed ? "collapsed" : ""}`}>{item.label}</span>
       </NavLink>
     );
   };
 
+  const effectiveCollapsed = collapsed && !isOffcanvas;
+
   return (
-  <div
-  className="sidebar-container d-flex flex-column shadow-sm border-end bg-white"
-  style={{
-    width: collapsed ? "50px" : "250px",
-    // minWidth: collapsed ? "50px" : "250px",
-    // maxWidth: collapsed ? "50px" : "250px",
-    transition: "width 0.22s cubic-bezier(.4,0,.2,1)",
-    minHeight: "100vh",
-    zIndex: 2,
-    overflow: "hidden",
-  }}
->
-  <div
-    className="d-flex align-items-center my-2 px-3 py-2 sidebar-link"
-    style={{ cursor: "pointer", height: "42px" }}
-    onClick={() => setCollapsed(!collapsed)}
-  >
-    <List size={20} />
-  </div>
+    <div
+      className="sidebar-container d-flex flex-column shadow-sm border-end bg-white"
+      style={{
+        width: isOffcanvas ? "100%" : (effectiveCollapsed ? "50px" : "220px"),
+        minWidth: isOffcanvas ? undefined : (effectiveCollapsed ? "50px" : "220px"),
+        maxWidth: isOffcanvas ? undefined : (effectiveCollapsed ? "50px" : "220px"),
+        transition: isOffcanvas ? "none" : "width 0.22s cubic-bezier(.4,0,.2,1)",
+        minHeight: "100vh",
+        zIndex: 2,
+        overflow: "hidden",
+      }}
+    >
+      {!isOffcanvas && (
+        <div
+          className="d-flex align-items-center my-2 px-3 py-2 sidebar-link"
+          style={{ cursor: "pointer", height: "42px" }}
+          onClick={onToggleCollapsed}
+        >
+          <List size={20} />
+        </div>
+      )}
 
-  <Nav className="flex-column mt-2">{menuItems.map((item) => renderMenuItem(item))}</Nav>
+      <Nav className="flex-column mt-2">{menuItems.map((item) => renderMenuItem(item))}</Nav>
 
-  <style>
-    {`
-      .sidebar-link { color: #495057; font-size: 14px; transition: background 0.24s, color 0.18s; white-space: nowrap; }
-      .sidebar-link:hover { background-color: #f1f3f5; color: #0d6efd !important; }
-      .sidebar-link.active { background-color: #e7f1ff; color: #0d6efd !important; font-weight: 600; border-left: 4px solid #0d6efd; padding-left: 0.75rem; }
-      .sidebar-label { display: inline-block; transition: opacity 0.22s, width 0.22s, margin 0.22s; opacity: 1; margin-left: 13px; }
-      .sidebar-label.collapsed { opacity: 0; width: 0 !important; margin: 0 !important; pointer-events: none; }
-      .sidebar-container { box-sizing: border-box; overflow-x: hidden; }
-      .submenu-wrapper { position: relative; transition: max-height 0.3s ease; }
-    `}
-  </style>
-</div>
-
+      <style>
+        {`
+          .sidebar-link { color: #495057; font-size: 14px; transition: background 0.24s, color 0.18s; white-space: nowrap; }
+          .sidebar-link:hover { background-color: #f1f3f5; color: #0d6efd !important; }
+          .sidebar-link.active { background-color: #e7f1ff; color: #0d6efd !important; font-weight: 600; border-left: 4px solid #0d6efd; padding-left: 0.75rem; }
+          .sidebar-label { display: inline-block; transition: opacity 0.22s, width 0.22s, margin 0.22s; opacity: 1; margin-left: 13px; }
+          .sidebar-label.collapsed { opacity: 0; width: 0 !important; margin: 0 !important; pointer-events: none; }
+          .sidebar-container { box-sizing: border-box; overflow-x: hidden; }
+          .submenu-wrapper { position: relative; transition: max-height 0.3s ease; }
+        `}
+      </style>
+    </div>
   );
 };
 

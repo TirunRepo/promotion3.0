@@ -39,7 +39,7 @@ const ResetPassword: React.FC = () => {
       setLoading(true);
       const response = await AuthService.resetPassword(token, values.password);
 
-      if (response?.success) {
+      if (response?.data?.status) {
         showToast("Password reset successfully! Please log in again.", "success");
         navigate("/login");
       } else {

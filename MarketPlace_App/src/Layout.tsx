@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Navbar, Dropdown, Image } from "react-bootstrap";
+import { Container, Navbar, Dropdown, Image, Offcanvas } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./common/Sidebar";
 import Breadcrumbs from "./common/Breakcrumbs";
@@ -7,15 +7,46 @@ import { useAuth } from "./context/AuthContext";
 
 const Layout: React.FC = () => {
   const { user, logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const handleLogout = async () => {
     await logout();
   };
 
   return (
     <div className="d-flex">
-      {/* Sidebar */}
-      <Sidebar />
+      {/* Offcanvas Sidebar for small screens (mobile) */}
+      <Offcanvas
+        show={showOffcanvas}
+        onHide={() => setShowOffcanvas(false)}
+        placement="start"
+        className="d-md-none"
+        style={{ width: 250 }}
+       backdrop={false}
+      >
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title
+            className="fw-bold"
+            style={{ fontSize: "1rem" }}
+          >
+            {user?.role?.trim().toLowerCase() === "admin"
+              ? "Cruise Marketplace Admin (Int2Cruise)"
+              : user?.companyName}
+          </Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body className="p-0">
+          <Sidebar isOffcanvas={true} />
+        </Offcanvas.Body>
+      </Offcanvas>
+
+      {/* Inline Sidebar for medium and large screens (tablet+) */}
+      <div className="d-none d-md-flex">
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          onToggleCollapsed={() => setSidebarCollapsed((prev) => !prev)}
+          isOffcanvas={false}
+        />
+      </div>
 
       {/* Main Content */}
       <div className="flex-grow-1">
@@ -28,8 +59,8 @@ const Layout: React.FC = () => {
           className="shadow-sm"
         >
           <button
-            className="btn btn-outline-light me-3 d-lg-none"
-            onClick={() => setCollapsed(!collapsed)}
+            className="btn btn-outline-light me-3 d-md-none"
+            onClick={() => setShowOffcanvas(!showOffcanvas)}
             style={{ padding: "2px 7px", fontSize: "1.2rem" }}
           >
             ☰
